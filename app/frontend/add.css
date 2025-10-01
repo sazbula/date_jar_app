@@ -1,0 +1,49 @@
+/* Shorter inputs & consistent look */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  display: block;
+  width: 85%;      /* smaller width */
+  margin: 10px auto;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+/* Category dropdown styled like buttons */
+.category-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background: #FFE4EC;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-family: 'Tangerine', cursive;
+  color: #800020;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-align: left;
+}
+
+.category-select:hover {
+  background: #C92D3B;
+  color: white;
+}
+
+/* Checkbox row */
+.checkboxes {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.checkboxes label {
+  font-family: 'Tangerine', cursive;
+  font-size: 1.3rem;
+  color: #A4161A;
+}

@@ -1,0 +1,151 @@
+body {
+  margin: 0;
+  font-family: 'Tangerine', cursive;
+  background: #FFF8F0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 1rem 0;
+  background: #FFF5EB;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.page-title {
+  font-family: 'Monsieur La Doulaise', cursive;
+  font-size: 2.8rem;
+  color: #A4161A;
+  margin: 0;
+}
+
+/* Controls row */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+/* Shared button style */
+.btn {
+  padding: 0.6rem 1.2rem;
+  background: #FFE4EC;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #800020;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background: #C92D3B;
+  color: white;
+}
+
+/* Category dropdown */
+.category-select {
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+/* Ideas list */
+.ideas-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 2rem;
+}
+
+.idea-item {
+  background: #FFF5EB;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.idea-title {
+  font-size: 1.8rem;
+  color: #A4161A;
+  margin: 0;
+}
+
+.idea-note {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 0.3rem 0 0 0;
+}
+
+/* Save button */
+.save-btn {
+  padding: 6px 12px;
+  background: #FFE4EC;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #800020;
+  transition: background 0.3s ease;
+}
+
+.save-btn:hover {
+  background: #f7b6c8;
+}
+
+/* Bottom navbar */
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #FFF5EB;
+  padding: 1rem;            /* larger padding */
+  border-top: 1px solid #ddd;
+}
+
+.navbar a {
+  text-decoration: none;
+  font-size: 1.4rem;        /* larger font */
+  font-family: 'Tangerine', cursive;
+  font-weight: bold;
+  color: #800020;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.navbar a:hover {
+  background: #FFE4EC;      /* light pink on hover */
+}
+
+.navbar a.active {
+  color: #A4161A;           /* burgundy highlight */
+  background: #FFE4EC;
+}
+
+/* Floating + button */
+.add-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: #A4161A;
+  color: white;
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.add-button:hover {
+  background: #861313;
+}

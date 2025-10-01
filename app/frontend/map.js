@@ -38,3 +38,8 @@ pins.forEach(pin => {
       </div>
     `);
 });
+
+
+document.querySelector(".home-button").addEventListener("click", () => {
+  window.location.href = "home.html";  
+});
