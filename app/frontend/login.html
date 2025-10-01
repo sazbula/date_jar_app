@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Date Jar - Login</title>
+  <link rel="stylesheet" href="login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Pacifico&family=Tangerine&family=Alex+Brush&family=Monsieur+La+Doulaise&family=Rouge+Script&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Corner logo -->
+  <img src="assets/jar-logo.svg" alt="Date Jar Logo" class="corner-logo">
+
+  <!-- Main login/register card -->
+  <div class="auth-container">
+    <h1>Date Jar</h1>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button id="loginTab" class="active">Login</button>
+      <button id="registerTab">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="form active">
+      <input type="text" id="loginUsername" placeholder="Username" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" class="form">
+      <input type="text" id="registerUsername" placeholder="Username" required>
+      <input type="password" id="registerPassword" placeholder="Password" required>
+      <button type="submit">Register</button>
+    </form>
+
+    <p id="message"></p>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
