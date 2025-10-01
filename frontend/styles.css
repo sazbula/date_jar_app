@@ -1,0 +1,108 @@
+body, input, button {
+  font-family: 'Tangerine', cursive;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #FFF8F0;
+}
+
+.auth-container {
+  background: #FFF5EB;
+  padding: 3rem 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  width: 420px;
+  text-align: center;
+}
+
+.auth-container h1 {
+  font-family: 'Monsieur La Doulaise', cursive;
+  font-size: 3.5rem;
+  color: #A4161A;
+  margin-bottom: 1.5rem;
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.6rem;;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  cursor: pointer;
+  background: #FFE4EC;
+  color: #800020;
+  font-size: 1.4rem;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.tabs button.active {
+  background: #E63946;
+  color: white;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #FF4B5C;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #FF4B5C;
+}
+
+form button[type="submit"] {
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  background: #E63946;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+  background: #C92D3B;
+}
+
+.form {
+  display: none;
+}
+
+.form.active {
+  display: block;
+}
+
+
+.corner-logo {
+  position: absolute;
+  top: 10px;     /* closer to very top */
+  left: 10px;    /* closer to left edge */
+  width: 150px;   /* bigger size */
+  height: auto;
+}

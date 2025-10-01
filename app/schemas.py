@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, conlist
+from typing import Optional, Annotated
 from typing import List, Optional
 
 # user schemas
@@ -24,7 +25,7 @@ class IdeaBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=120)
     note: str = ""
     # must pick 1–3 categories
-    categories: conlist(str, min_items=1, max_items=3)
+    categories: Annotated[conlist(str), Field(min_length=1, max_length=3)]
     is_public: bool = False
     is_home: bool = False
     lat: Optional[float] = None
