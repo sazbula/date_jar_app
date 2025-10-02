@@ -1,5 +1,7 @@
-// Later this will load the "hearted ideas" dynamically from backend.
-// For now, just show an alert when removing.
+const username = localStorage.getItem("username");
+const res = await fetch(`http://127.0.0.1:8000/api/users/${username}/jar`);
+const ideas = await res.json();
+
 document.querySelectorAll('.remove-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     alert("Removed from your Date Jar!");

@@ -20,7 +20,7 @@ registerTab.addEventListener("click", () => {
 });
 
 // --- API base URL (change if needed) ---
-const API_BASE = "http://127.0.0.1:8000"; // FastAPI local server
+const API_BASE = "http://127.0.0.1:8000/api/users";
 
 // --- Handle login ---
 loginForm.addEventListener("submit", async (e) => {
@@ -29,7 +29,7 @@ loginForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("loginPassword").value;
 
   try {
-    const res = await fetch(`${API_BASE}/auth/login`, {
+    const res = await fetch(`${API_BASE}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -54,7 +54,7 @@ registerForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("registerPassword").value;
 
   try {
-    const res = await fetch(`${API_BASE}/auth/register`, {
+    const res = await fetch(`${API_BASE}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),

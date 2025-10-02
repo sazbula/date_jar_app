@@ -14,13 +14,16 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("/register", status_code=201)
 def register(payload: UserCreate, db: Session = Depends(get_db)):
+    # Check if username is already taken
     if db.query(User).filter(User.username == payload.username).first():
         raise HTTPException(status_code=400, detail="Username already taken")
 
+    # Store password directly (⚠️ plain text, for testing only)
     new_user = User(
         username=payload.username,
-        password_hash=hash_password(payload.password),
+        password_hash=payload.password,
     )
+
     db.add(new_user)
     db.commit()
     return {"message": f"User '{new_user.username}' registered successfully"}
@@ -30,8 +33,11 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login(payload: UserCreate, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == payload.username).first()
-    if not user or not verify_password(payload.password, user.password_hash):
+
+    # Check plain-text password match
+    if not user or payload.password != user.password_hash:
         raise HTTPException(status_code=401, detail="Invalid username or password")
+
     return {"message": f"Login successful! Welcome {user.username}"}
 
 

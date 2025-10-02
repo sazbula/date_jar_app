@@ -14,14 +14,20 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 
+@app.get("/")
+def root():
+    return RedirectResponse(url="/static/login.html")
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
 
 
 # routers
-app.include_router(users.router)
-app.include_router(ideas.router)
+
+app.include_router(users.router, prefix="/api")
+app.include_router(ideas.router, prefix="/api")
 
 
 # make tables when app starts

@@ -1,3 +1,6 @@
+const res = await fetch("http://127.0.0.1:8000/api/ideas/public");
+const publicIdeas = await res.json();
+
 // Initialize map centered on Madrid
 const map = L.map('map').setView([40.4168, -3.7038], 13);
 

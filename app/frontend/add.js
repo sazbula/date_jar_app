@@ -1,3 +1,14 @@
+
+
+fetch(`http://127.0.0.1:8000/api/users/heart/${ideaId}`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ username: localStorage.getItem("username") })
+});
+
+
+const API_BASE = "http://127.0.0.1:8000/api/ideas";
+
 document.getElementById("ideaForm").addEventListener("submit", (e) => {
   e.preventDefault();
 
