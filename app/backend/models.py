@@ -3,13 +3,16 @@ from sqlalchemy import (
     Integer,
     String,
     Boolean,
-    Float,
     ForeignKey,
     Text,
+    Float,
     UniqueConstraint,
 )
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from .db import Base
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import mapped_column
+
+from app.backend.db import Base
 
 
 # the table for users in the database

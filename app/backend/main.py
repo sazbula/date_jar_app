@@ -1,15 +1,17 @@
 from fastapi import FastAPI
-from .db import Base, engine
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
-
-from ..routers import users, ideas
+from app.backend.db import Base, engine
+from app.backend.routers import ideas, users
 
 # fastapi instance
 app = FastAPI()
 
-
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+BASE_DIR = Path(__file__).resolve().parent.parent  # DATE_JAR_APP/app/
+FRONTEND_DIR = BASE_DIR / "frontend"
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 
 @app.get("/api/health")
