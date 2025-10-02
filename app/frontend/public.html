@@ -58,10 +58,16 @@
   <a href="public.html">Public Ideas</a>
 </nav>
 
-  <!-- Floating add button -->
-  <button class="add-button">+</button>
 
-  <script src="public.js"></script>
+  <!-- Floating add button -->
+<button class="add-button">+</button>
+
+<script>
+  document.querySelector(".add-button").addEventListener("click", () => {
+    window.location.href = "add.html";  // Redirect to Add page
+  });
+
+</script>
 </body>
 </html>
 

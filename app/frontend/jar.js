@@ -5,3 +5,12 @@ document.querySelectorAll('.remove-btn').forEach(btn => {
     alert("Removed from your Date Jar!");
   });
 });
+
+// Attach Add button functionality to redirect to add.html
+const addBtn = document.querySelector(".add-button");
+
+if (addBtn) {
+  addBtn.addEventListener("click", () => {
+    window.location.href = "add.html"; // redirect to Add page
+  });
+}
