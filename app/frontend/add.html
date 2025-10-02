@@ -1,38 +1,44 @@
-<!-- Floating Add Button -->
-<button class="add-button">+</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New Idea</title>
+  <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tangerine&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="add.css">
+</head>
+<body>
+  <main class="form-wrapper">
+    <div class="form-card">
+      <h1 class="form-title">Add New Date</h1>
+      <form id="ideaForm">
+        <input type="text" id="ideaTitle" placeholder="Title" required>
+        <textarea id="ideaNote" placeholder="Note"></textarea>
 
-<!-- Modal -->
-<div id="ideaModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2>Add New Idea</h2>
-    <form id="ideaForm">
-      <input type="text" id="ideaTitle" placeholder="Title" required>
-      <textarea id="ideaNote" placeholder="Note"></textarea>
+        <select id="ideaCategory" class="category-select" required>
+          <option value="" disabled selected>Choose category</option>
+          <option value="outdoor">Outdoor</option>
+          <option value="at-home">At-home</option>
+          <option value="romantic">Romantic</option>
+          <option value="artsy">Artsy</option>
+          <option value="sports">Sports</option>
+          <option value="party">Party</option>
+          <option value="drinking">Drinking</option>
+          <option value="extra-romantic">Extra-romantic</option>
+          <option value="food">Food</option>
+          <option value="on-a-budget">On-a-budget</option>
+          <option value="culture">Culture</option>
+          <option value="self-care">Self-care</option>
+          <option value="learning">Learning</option>
+        </select>
 
-      <select id="ideaCategory" class="category-select" required>
-        <option value="" disabled selected>Choose category</option>
-        <option value="outdoor">Outdoor</option>
-        <option value="at-home">At-home</option>
-        <option value="romantic">Romantic</option>
-        <option value="artsy">Artsy</option>
-        <option value="sports">Sports</option>
-        <option value="party">Party</option>
-        <option value="drinking">Drinking</option>
-        <option value="extra-romantic">Extra-romantic</option>
-        <option value="food">Food</option>
-        <option value="on-a-budget">On-a-budget</option>
-        <option value="culture">Culture</option>
-        <option value="self-care">Self-care</option>
-        <option value="learning">Learning</option>
-      </select>
+        <div class="checkboxes">
+          <label><input type="checkbox" id="isPublic"> Public</label>
+          <label><input type="checkbox" id="isPrivate"> Private</label>
+        </div>
 
-      <div class="checkboxes">
-        <label><input type="checkbox" id="isPublic"> Public</label>
-        <label><input type="checkbox" id="isPrivate"> Private</label>
-      </div>
-
-      <button type="submit">Save Idea</button>
-    </form>
-  </div>
-</div>
+        <button type="submit" class="btn save-btn">Save Idea</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

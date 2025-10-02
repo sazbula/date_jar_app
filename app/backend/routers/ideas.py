@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 import json, random
-from ..db import get_db
-from ..models import User, Idea, Favorite
-from ..schemas import UserCreate, IdeaCreate, IdeaUpdate, IdeaOut
-from ..auth import verify_password
+from ..backend.db import get_db
+from ..backend.models import User, Idea, Favorite
+from ..backend.schemas import UserCreate, IdeaCreate, IdeaUpdate, IdeaOut
+from ..backend.auth import verify_password
 
 router = APIRouter(prefix="/ideas", tags=["ideas"])
 

@@ -3,7 +3,7 @@ from .db import Base, engine
 from fastapi.staticfiles import StaticFiles
 
 
-from .routers import users, ideas
+from ..routers import users, ideas
 
 # fastapi instance
 app = FastAPI()

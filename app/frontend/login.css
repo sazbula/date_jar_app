@@ -106,3 +106,27 @@ form button[type="submit"]:hover {
   width: 150px;   /* bigger size */
   height: auto;
 }
+
+.add-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: #A4161A;   /* burgundy */
+  color: white;
+  font-family: sans-serif; /* regular font */
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.add-button:hover {
+  background: #861313; /* darker burgundy on hover */
+}
+
+
+

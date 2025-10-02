@@ -24,10 +24,7 @@ pins.forEach(pin => {
     `);
 });
 
-// Handle Add button click
-document.querySelector(".add-button").addEventListener("click", () => {
-  alert("Add new date idea form will go here!");
-});
+
 
 pins.forEach(pin => {
   L.marker(pin.coords).addTo(map)
@@ -39,7 +36,11 @@ pins.forEach(pin => {
     `);
 });
 
+document.querySelector(".add-button").addEventListener("click", () => {
+  window.location.href = "add.html";      
+});
 
 document.querySelector(".home-button").addEventListener("click", () => {
   window.location.href = "home.html";  
 });
+

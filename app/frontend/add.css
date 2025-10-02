@@ -1,32 +1,58 @@
-/* Shorter inputs & consistent look */
-.modal-content input,
-.modal-content textarea,
-.modal-content select {
+body {
+  margin: 0;
+  font-family: 'Tangerine', cursive;
+  background: #FFF8F0; /* beige background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Card (rectangle) */
+.form-card {
+  background: #FFF5EB;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+}
+
+/* Title */
+.form-title {
+  font-family: 'Monsieur La Doulaise', cursive;
+  font-size: 3rem;
+  color: #800020; /* dark burgundy */
+  margin-bottom: 1.5rem;
+}
+
+/* Inputs */
+form input,
+form textarea,
+form select {
   display: block;
-  width: 85%;      /* smaller width */
+  width: 90%;
   margin: 10px auto;
-  padding: 8px;
+  padding: 10px;
   border-radius: 6px;
   border: 1px solid #ddd;
   font-size: 1rem;
+  font-family: 'Tangerine', cursive;
 }
 
-/* Category dropdown styled like buttons */
+/* Fix category to look like inputs */
 .category-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
   background: #FFE4EC;
-  border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
+  color: #A4161A;
   font-family: 'Tangerine', cursive;
-  color: #800020;
+  font-size: 1.5rem;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 90%;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s ease;
-  text-align: left;
+
 }
 
 .category-select:hover {
@@ -41,9 +67,26 @@
   gap: 1.5rem;
   margin: 1rem 0;
 }
-
-.checkboxes label {
+.checkboxes
+ label {
+  font-size: 1.4rem;
   font-family: 'Tangerine', cursive;
-  font-size: 1.3rem;
+  
   color: #A4161A;
+}
+
+/* Save button */
+.btn.save-btn {
+  background: #A4161A;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.4rem;
+  font-family: 'Tangerine', cursive;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.btn.save-btn:hover {
+  background: #861313;
 }
