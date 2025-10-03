@@ -1,18 +1,14 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Boolean,
-    ForeignKey,
-    Text,
-    Float,
-    UniqueConstraint,
-)
-from sqlalchemy.orm import Mapped
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm import mapped_column
-
 from app.backend.db import Base
+
+# --- Association table for many-to-many favorites ---
+favorites_table = Table(
+    "favorites",
+    Base.metadata,
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+    Column("idea_id", ForeignKey("ideas.id"), primary_key=True),
+)
 
 
 class User(Base):
@@ -20,12 +16,14 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
-    password = Column(String)
+    password_hash = Column(String)  # ⚡ store hashed passwords only
 
-    # relationships
+    # Relationships
     ideas = relationship("Idea", back_populates="owner")
     favorites = relationship(
-        "Idea", secondary="favorites", back_populates="favorited_by"
+        "Idea",
+        secondary=favorites_table,
+        back_populates="favorited_by",
     )
 
 
@@ -35,22 +33,17 @@ class Idea(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     note = Column(String, default="")
-    categories = Column(String)
+    categories = Column(String)  # store as "sporty,indoor"
     is_public = Column(Boolean, default=False)
     is_home = Column(Boolean, default=False)
-    lat = Column(Float)
-    lon = Column(Float)
+    lat = Column(Float, nullable=True)
+    lon = Column(Float, nullable=True)
+
     owner_id = Column(Integer, ForeignKey("users.id"))
-
-    # relationships
     owner = relationship("User", back_populates="ideas")
+
     favorited_by = relationship(
-        "User", secondary="favorites", back_populates="favorites"
+        "User",
+        secondary=favorites_table,
+        back_populates="favorites",
     )
-
-
-class Favorite(Base):
-    __tablename__ = "favorites"
-
-    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    idea_id = Column(Integer, ForeignKey("ideas.id"), primary_key=True)

@@ -1,5 +1,5 @@
 // API base URL (update if your backend runs elsewhere)
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "http://127.0.0.1:8000/api/ideas";
 
 // Elements
 const ideasList = document.querySelector(".ideas-list");
@@ -8,10 +8,11 @@ const categorySelect = document.querySelector(".category-select");
 // --- Fetch and render public ideas ---
 async function fetchPublicIdeas(category = "") {
   try {
-    // Build query string if a category is chosen
-    let url = `${API_BASE}/ideas?is_public=true`;
+    // Use the correct endpoint for public ideas
+    let url = `${API_BASE}/public`;
+    // Optionally filter by category if your backend supports it
     if (category) {
-      url += `&category=${encodeURIComponent(category)}`;
+      url += `?category=${encodeURIComponent(category)}`;
     }
 
     const res = await fetch(url);
@@ -55,7 +56,7 @@ async function saveToJar(idea) {
       return;
     }
 
-    const res = await fetch(`${API_BASE}/ideas/save`, {
+    const res = await fetch(`${API_BASE}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,25 +1,31 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-import random, json
+from typing import List
+import json, random
 
 from app.backend.db import get_db
-from app.backend.models import User, Idea, Favorite
-from app.backend.schemas import UserCreate
-from app.backend.schemas import IdeaCreate, IdeaUpdate, IdeaOut
-from app.backend.auth import verify_password
+from app.backend import models, schemas, auth
 
-router = APIRouter(prefix="/ideas", tags=["ideas"])
+router = APIRouter(tags=["ideas"])
 
-
-# to auth user
-def authenticate(db: Session, creds: UserCreate) -> User | None:
-    user = db.query(User).filter(User.username == creds.username).first()
-    if user and verify_password(creds.password, user.password):
-        return user
-    return None
+# --- OAuth2 scheme to get token from Authorization header ---
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
 
 
-# possible categories
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+) -> models.User:
+    payload = auth.decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    user = db.query(models.User).filter(models.User.id == int(payload["sub"])).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+# --- Allowed categories ---
 ALLOWED_CATEGORIES = [
     "home",
     "outdoor",
@@ -42,46 +48,40 @@ def list_categories():
     return {"categories": ALLOWED_CATEGORIES}
 
 
-# creating idea
-@router.post("/", response_model=IdeaOut, status_code=201)
-def create_idea(payload: IdeaCreate, creds: UserCreate, db: Session = Depends(get_db)):
-    user = authenticate(db, creds)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    # validate categories: must pick 1–3, all valid
+# --- CREATE IDEA ---
+@router.post("/", response_model=schemas.IdeaOut, status_code=201)
+def create_idea(
+    payload: schemas.IdeaCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     if not payload.categories or len(payload.categories) == 0:
-        raise HTTPException(
-            status_code=400, detail="You must select at least one category"
-        )
+        raise HTTPException(status_code=400, detail="Must select at least one category")
     if len(payload.categories) > 3:
-        raise HTTPException(
-            status_code=400, detail="You can select a maximum of 3 categories"
-        )
+        raise HTTPException(status_code=400, detail="Max 3 categories allowed")
     for cat in payload.categories:
         if cat not in ALLOWED_CATEGORIES:
             raise HTTPException(status_code=400, detail=f"Invalid category: {cat}")
 
-    # special handling for "home" ideas
     if "home" in payload.categories:
         payload.lat = None
         payload.lon = None
 
-    idea = Idea(
-        owner_id=user.id,
+    idea = models.Idea(
+        owner_id=current_user.id,
         title=payload.title,
         note=payload.note,
-        categories_json=json.dumps(payload.categories),
+        categories=json.dumps(payload.categories),
         is_public=payload.is_public,
         is_home=payload.is_home,
-        address=payload.address,
         lat=payload.lat,
         lon=payload.lon,
     )
     db.add(idea)
     db.commit()
     db.refresh(idea)
-    return IdeaOut(
+
+    return schemas.IdeaOut(
         id=idea.id,
         owner_id=idea.owner_id,
         title=idea.title,
@@ -94,47 +94,39 @@ def create_idea(payload: IdeaCreate, creds: UserCreate, db: Session = Depends(ge
     )
 
 
-# editing idea
-@router.put("/{idea_id}", response_model=IdeaOut)
+# --- EDIT IDEA ---
+@router.put("/{idea_id}", response_model=schemas.IdeaOut)
 def edit_idea(
-    idea_id: int, payload: IdeaUpdate, creds: UserCreate, db: Session = Depends(get_db)
+    idea_id: int,
+    payload: schemas.IdeaUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
 ):
-    user = authenticate(db, creds)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+    idea = db.query(models.Idea).get(idea_id)
+    if not idea or idea.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Idea not found or not yours")
 
-    # validate categories: must pick 1–3, all valid
     if not payload.categories or len(payload.categories) == 0:
-        raise HTTPException(
-            status_code=400, detail="You must select at least one category"
-        )
+        raise HTTPException(status_code=400, detail="Must select at least one category")
     if len(payload.categories) > 3:
-        raise HTTPException(
-            status_code=400, detail="You can select a maximum of 3 categories"
-        )
-    for cat in payload.categories:
-        if cat not in ALLOWED_CATEGORIES:
-            raise HTTPException(status_code=400, detail=f"Invalid category: {cat}")
+        raise HTTPException(status_code=400, detail="Max 3 categories allowed")
 
-    # special handling for "home" ideas
     if "home" in payload.categories:
         payload.lat = None
         payload.lon = None
 
-    idea = db.query(Idea).get(idea_id)
-    if not idea or idea.owner_id != user.id:
-        raise HTTPException(status_code=404, detail="Idea not found or not yours")
-
     idea.title = payload.title
     idea.note = payload.note
-    idea.categories_json = json.dumps(payload.categories)
+    idea.categories = json.dumps(payload.categories)
     idea.is_public = payload.is_public
     idea.is_home = payload.is_home
     idea.lat = payload.lat
     idea.lon = payload.lon
+
     db.commit()
     db.refresh(idea)
-    return IdeaOut(
+
+    return schemas.IdeaOut(
         id=idea.id,
         owner_id=idea.owner_id,
         title=idea.title,
@@ -147,15 +139,15 @@ def edit_idea(
     )
 
 
-# deleting idea
+# --- DELETE IDEA ---
 @router.delete("/{idea_id}", status_code=204)
-def delete_idea(idea_id: int, creds: UserCreate, db: Session = Depends(get_db)):
-    user = authenticate(db, creds)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    idea = db.query(Idea).get(idea_id)
-    if not idea or idea.owner_id != user.id:
+def delete_idea(
+    idea_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    idea = db.query(models.Idea).get(idea_id)
+    if not idea or idea.owner_id != current_user.id:
         raise HTTPException(status_code=404, detail="Idea not found or not yours")
 
     db.delete(idea)
@@ -163,27 +155,58 @@ def delete_idea(idea_id: int, creds: UserCreate, db: Session = Depends(get_db)):
     return
 
 
-# my jar - private + hearted
-@router.get("/jar", response_model=list[IdeaOut])
-def my_jar(creds: UserCreate, db: Session = Depends(get_db)):
-    user = authenticate(db, creds)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+# -------- HEART IDEA --------
+@router.post("/heart/{idea_id}")
+def heart_idea(
+    idea_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    idea = db.query(models.Idea).get(idea_id)
+    if not idea:
+        raise HTTPException(status_code=404, detail="Idea not found")
 
-    # my own
-    own = db.query(Idea).filter(Idea.owner_id == user.id).all()
-    # hearted
-    favs = db.query(Favorite).filter(Favorite.user_id == user.id).all()
-    hearted = [db.query(Idea).get(f.idea_id) for f in favs]
+    if idea in current_user.favorites:
+        return {"message": "Already in your jar"}
+
+    current_user.favorites.append(idea)
+    db.commit()
+    return {"message": "Idea added to your jar"}
+
+
+# -------- UNHEART IDEA --------
+@router.delete("/heart/{idea_id}")
+def unheart_idea(
+    idea_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    idea = db.query(models.Idea).get(idea_id)
+    if not idea or idea not in current_user.favorites:
+        raise HTTPException(status_code=404, detail="Not in your jar")
+
+    current_user.favorites.remove(idea)
+    db.commit()
+    return {"message": "Idea removed from your jar"}
+
+
+# --- MY JAR (own + favorites) ---
+@router.get("/jar", response_model=List[schemas.IdeaOut])
+def my_jar(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    own = db.query(models.Idea).filter(models.Idea.owner_id == current_user.id).all()
+    hearted = current_user.favorites  # many-to-many relationship
 
     rows = own + hearted
     return [
-        IdeaOut(
+        schemas.IdeaOut(
             id=r.id,
             owner_id=r.owner_id,
             title=r.title,
             note=r.note,
-            categories=json.loads(r.categories_json),
+            categories=json.loads(r.categories) if r.categories else [],
             is_public=r.is_public,
             is_home=r.is_home,
             lat=r.lat,
@@ -193,17 +216,17 @@ def my_jar(creds: UserCreate, db: Session = Depends(get_db)):
     ]
 
 
-# looking at public ideas
-@router.get("/public", response_model=list[IdeaOut])
+# --- PUBLIC IDEAS ---
+@router.get("/public", response_model=List[schemas.IdeaOut])
 def public_ideas(db: Session = Depends(get_db)):
-    rows = db.query(Idea).filter(Idea.is_public == True).all()
+    rows = db.query(models.Idea).filter(models.Idea.is_public == True).all()
     return [
-        IdeaOut(
+        schemas.IdeaOut(
             id=r.id,
             owner_id=r.owner_id,
             title=r.title,
             note=r.note,
-            categories=json.loads(r.categories_json),
+            categories=json.loads(r.categories) if r.categories else [],
             is_public=r.is_public,
             is_home=r.is_home,
             lat=r.lat,
@@ -213,31 +236,30 @@ def public_ideas(db: Session = Depends(get_db)):
     ]
 
 
-# randomizer to pick idea from, using category
-@router.get("/random", response_model=IdeaOut)
-def randomizer(category: str, creds: UserCreate, db: Session = Depends(get_db)):
-    user = authenticate(db, creds)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+# --- RANDOM IDEA ---
+@router.get("/random", response_model=schemas.IdeaOut)
+def randomizer(
+    category: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    own = db.query(models.Idea).filter(models.Idea.owner_id == current_user.id).all()
+    hearted = current_user.favorites
 
-    # all from personal jar
-    own = db.query(Idea).filter(Idea.owner_id == user.id).all()
-    favs = db.query(Favorite).filter(Favorite.user_id == user.id).all()
-    hearted = [db.query(Idea).get(f.idea_id) for f in favs]
     jar = own + hearted
-
-    # category
-    filtered = [i for i in jar if category in json.loads(i.categories_json)]
+    filtered = [
+        i for i in jar if category in (json.loads(i.categories) if i.categories else [])
+    ]
     if not filtered:
         raise HTTPException(status_code=404, detail="No ideas in this category")
 
     idea = random.choice(filtered)
-    return IdeaOut(
+    return schemas.IdeaOut(
         id=idea.id,
         owner_id=idea.owner_id,
         title=idea.title,
         note=idea.note,
-        categories=json.loads(idea.categories_json),
+        categories=json.loads(idea.categories) if idea.categories else [],
         is_public=idea.is_public,
         is_home=idea.is_home,
         lat=idea.lat,

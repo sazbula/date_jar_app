@@ -1,21 +1,23 @@
-# db.py → here i connect the app to the SQLite database
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# where the database lives
-DATABASE_URL = "sqlite:///./datejar.db"
+# Local SQLite database
+SQLALCHEMY_DATABASE_URL = "sqlite:///./datejar.db"
 
-# drives the connection to the database.
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+# Engine = actual DB connection
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False},  # needed for SQLite in FastAPI
+)
 
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+# Session = talk to DB
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base class = all models will inherit from this
+Base = declarative_base()
 
 
-# starting point for all of all things(User, Idea, Favorite)
-class Base(DeclarativeBase):
-    pass
-
-
+# Dependency for FastAPI routes
 def get_db():
     db = SessionLocal()
     try:

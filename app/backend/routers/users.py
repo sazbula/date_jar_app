@@ -1,79 +1,47 @@
-from fastapi import APIRouter, Depends, HTTPException
+from datetime import timedelta
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.backend.db import get_db
-from app.backend.models import User, Idea, Favorite
-from app.backend.schemas import UserCreate, UserOut
-from app.backend.auth import hash_password, verify_password
+from app.backend import models, schemas, auth
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(tags=["users"])
 
 
-# registration and hash pass
-
-
-@router.post("/register", status_code=201)
-def register(payload: UserCreate, db: Session = Depends(get_db)):
-    # Check if username is already taken
-    if db.query(User).filter(User.username == payload.username).first():
+# -------- REGISTER --------
+@router.post("/register", response_model=schemas.UserOut, status_code=201)
+def register(payload: schemas.UserCreate, db: Session = Depends(get_db)):
+    if db.query(models.User).filter(models.User.username == payload.username).first():
         raise HTTPException(status_code=400, detail="Username already taken")
 
-    # Store password directly (⚠️ plain text, for testing only)
-    new_user = User(
+    new_user = models.User(
         username=payload.username,
-        password=payload.password,
+        password_hash=auth.hash_password(payload.password),
     )
-
     db.add(new_user)
     db.commit()
-    return {"message": f"User '{new_user.username}' registered successfully"}
+    db.refresh(new_user)
+
+    return new_user
 
 
-# login
-@router.post("/login")
-def login(payload: UserCreate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == payload.username).first()
+# -------- LOGIN (JSON, not form-data) --------
+@router.post("/login", response_model=schemas.Token)
+def login(payload: schemas.UserCreate, db: Session = Depends(get_db)):
+    user = (
+        db.query(models.User).filter(models.User.username == payload.username).first()
+    )
+    if not user or not auth.verify_password(payload.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+        )
 
-    # Check plain-text password match
-    if not user or payload.password != user.password:
-        raise HTTPException(status_code=401, detail="Invalid username or password")
+    access_token_expires = timedelta(minutes=auth.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = auth.create_access_token(
+        data={"sub": str(user.id)},  # store user.id inside token
+        expires_delta=access_token_expires,
+    )
 
-    return {"message": f"Login successful! Welcome {user.username}"}
-
-
-# heart an idea
-@router.post("/heart/{idea_id}")
-def heart_idea(idea_id: int, creds: UserCreate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == creds.username).first()
-    if not user or not verify_password(creds.password, user.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    idea = db.query(Idea).get(idea_id)
-    if not idea:
-        raise HTTPException(status_code=404, detail="Idea not found")
-
-    # already hearted before
-    existing = db.query(Favorite).filter_by(user_id=user.id, idea_id=idea.id).first()
-    if existing:
-        return {"message": "Already in your jar"}
-
-    fav = Favorite(user_id=user.id, idea_id=idea.id)
-    db.add(fav)
-    db.commit()
-    return {"message": "Idea added to your jar"}
-
-
-# unheart
-@router.delete("/heart/{idea_id}")
-def unheart_idea(idea_id: int, creds: UserCreate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == creds.username).first()
-    if not user or not verify_password(creds.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    fav = db.query(Favorite).filter_by(user_id=user.id, idea_id=idea_id).first()
-    if not fav:
-        raise HTTPException(status_code=404, detail="Not in your jar")
-
-    db.delete(fav)
-    db.commit()
-    return {"message": "Idea removed from your jar"}
+    return {"access_token": access_token, "token_type": "bearer"}
