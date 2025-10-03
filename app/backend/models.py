@@ -15,67 +15,42 @@ from sqlalchemy.orm import mapped_column
 from app.backend.db import Base
 
 
-# the table for users in the database
 class User(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    password = Column(String)
 
-    username: Mapped[str] = mapped_column(
-        String(50), unique=True, index=True, nullable=False
+    # relationships
+    ideas = relationship("Idea", back_populates="owner")
+    favorites = relationship(
+        "Idea", secondary="favorites", back_populates="favorited_by"
     )
-
-    # password (hashed)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-
-    # user relationships w ideas and favorites
-    ideas = relationship("Idea", back_populates="owner", cascade="all, delete-orphan")
-
-
-# the table for ideas in the db
 
 
 class Idea(Base):
     __tablename__ = "ideas"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-
-    owner_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-
-    title: Mapped[str] = mapped_column(String(120), nullable=False)
-    note: Mapped[str] = mapped_column(Text, default="")
-
-    categories_json: Mapped[str] = mapped_column(Text, default="[]")
-
-    # visibility
-    is_public: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_home: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    # coordinates (lat/lon for map)
-    lat: Mapped[float | None] = mapped_column(Float, nullable=True)
-    lon: Mapped[float | None] = mapped_column(Float, nullable=True)
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    note = Column(String, default="")
+    categories = Column(String)
+    is_public = Column(Boolean, default=False)
+    is_home = Column(Boolean, default=False)
+    lat = Column(Float)
+    lon = Column(Float)
+    owner_id = Column(Integer, ForeignKey("users.id"))
 
     # relationships
     owner = relationship("User", back_populates="ideas")
     favorited_by = relationship(
-        "Favorite", back_populates="idea", cascade="all, delete-orphan"
+        "User", secondary="favorites", back_populates="favorites"
     )
 
 
-# the table for favorites in the db (many-to-many relationship between users and ideas)
 class Favorite(Base):
     __tablename__ = "favorites"
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
-    )
-    idea_id: Mapped[int] = mapped_column(
-        ForeignKey("ideas.id", ondelete="CASCADE"), primary_key=True
-    )
-
-    user = relationship("User")
-    idea = relationship("Idea", back_populates="favorited_by")
-
-    __table_args__ = (UniqueConstraint("user_id", "idea_id", name="uq_user_idea"),)
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    idea_id = Column(Integer, ForeignKey("ideas.id"), primary_key=True)

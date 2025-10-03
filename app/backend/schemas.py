@@ -22,14 +22,14 @@ class UserOut(BaseModel):
 
 
 class IdeaBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=120)
+    title: str
     note: str = ""
-    # must pick 1–3 categories
-    categories: Annotated[conlist(str), Field(min_length=1, max_length=3)]
+    categories: list[str]
     is_public: bool = False
     is_home: bool = False
-    lat: Optional[float] = None
-    lon: Optional[float] = None
+    address: Optional[str] = None
+    lat: float | None = None
+    lon: float | None = None
 
 
 class IdeaCreate(IdeaBase):

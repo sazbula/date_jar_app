@@ -9,12 +9,20 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Example pins (fake data for now)
-const pins = [
-  { title: "Picnic in the park", coords: [40.4218, -3.7074] },
-  { title: "Art gallery date", coords: [40.4158, -3.6994] },
-  { title: "Rooftop dinner", coords: [40.4175, -3.7030] }
-];
+async function loadIdeas() {
+  const res = await fetch("http://127.0.0.1:8000/api/ideas");
+  const ideas = await res.json();
+
+  ideas.forEach(idea => {
+    if (idea.lat && idea.lon) {
+      L.marker([idea.lat, idea.lon])
+        .addTo(map)
+        .bindPopup(`<b>${idea.title}</b><br>${idea.note}`);
+    }
+  });
+}
+
+loadIdeas();
 
 // Add markers for each pin
 pins.forEach(pin => {

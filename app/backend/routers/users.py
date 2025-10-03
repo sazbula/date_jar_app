@@ -21,7 +21,7 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
     # Store password directly (⚠️ plain text, for testing only)
     new_user = User(
         username=payload.username,
-        password_hash=payload.password,
+        password=payload.password,
     )
 
     db.add(new_user)
@@ -35,7 +35,7 @@ def login(payload: UserCreate, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == payload.username).first()
 
     # Check plain-text password match
-    if not user or payload.password != user.password_hash:
+    if not user or payload.password != user.password:
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     return {"message": f"Login successful! Welcome {user.username}"}
@@ -45,7 +45,7 @@ def login(payload: UserCreate, db: Session = Depends(get_db)):
 @router.post("/heart/{idea_id}")
 def heart_idea(idea_id: int, creds: UserCreate, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == creds.username).first()
-    if not user or not verify_password(creds.password, user.password_hash):
+    if not user or not verify_password(creds.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     idea = db.query(Idea).get(idea_id)

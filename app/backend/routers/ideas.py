@@ -14,7 +14,7 @@ router = APIRouter(prefix="/ideas", tags=["ideas"])
 # to auth user
 def authenticate(db: Session, creds: UserCreate) -> User | None:
     user = db.query(User).filter(User.username == creds.username).first()
-    if user and verify_password(creds.password, user.password_hash):
+    if user and verify_password(creds.password, user.password):
         return user
     return None
 
@@ -74,6 +74,7 @@ def create_idea(payload: IdeaCreate, creds: UserCreate, db: Session = Depends(ge
         categories_json=json.dumps(payload.categories),
         is_public=payload.is_public,
         is_home=payload.is_home,
+        address=payload.address,
         lat=payload.lat,
         lon=payload.lon,
     )

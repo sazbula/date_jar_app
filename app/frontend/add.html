@@ -8,7 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tangerine&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="add.css">   <!-- must match location of add.css -->
+  <link rel="stylesheet" href="add.css">
+  
 </head>
 <body class="add-page">
   <main class="form-wrapper">
@@ -34,15 +35,31 @@
           <option value="self-care">Self-care</option>
           <option value="learning">Learning</option>
         </select>
+        <!-- New Address -->
+        <input type="text" id="ideaAddress" placeholder="Address (optional)">
+
+        <div class="checkboxes">
+          <label><input type="checkbox" id="isPublic"> Public</label>
+        </div>
 
         <div class="checkboxes">
           <label><input type="checkbox" id="isPublic"> Public</label>
           <label><input type="checkbox" id="isPrivate"> Private</label>
         </div>
 
+        <!-- 🔹 Add hidden fields for lat/lon -->
+        <input type="hidden" id="lat">
+        <input type="hidden" id="lon">
+
         <button type="submit" class="btn save-btn">Save Idea</button>
       </form>
     </div>
   </main>
+
+  <!-- 🔹 Map section under the form -->
+  <div id="map" style="height:400px;width:100%"></div>
+
+  <!-- Scripts -->
+  <script src="add.js"></script>
 </body>
 </html>
