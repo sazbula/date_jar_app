@@ -1,15 +1,18 @@
-// --- Tab switching ---
+import { loginUser, registerUser } from "./api.js";
+
+// --- TAB SWITCHING LOGIC ---
 const loginTab = document.getElementById("loginTab");
 const registerTab = document.getElementById("registerTab");
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
-const message = document.getElementById("message");
+const messageEl = document.getElementById("message");
 
 loginTab.addEventListener("click", () => {
   loginTab.classList.add("active");
   registerTab.classList.remove("active");
   loginForm.classList.add("active");
   registerForm.classList.remove("active");
+  messageEl.textContent = "";
 });
 
 registerTab.addEventListener("click", () => {
@@ -17,56 +20,49 @@ registerTab.addEventListener("click", () => {
   loginTab.classList.remove("active");
   registerForm.classList.add("active");
   loginForm.classList.remove("active");
+  messageEl.textContent = "";
 });
 
-// --- API base URL (change if needed) ---
-const API_BASE = "http://127.0.0.1:8000/api/users";
-
-// --- Handle login ---
+// --- LOGIN FORM ---
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const username = document.getElementById("loginUsername").value;
-  const password = document.getElementById("loginPassword").value;
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
   try {
-    const res = await fetch(`${API_BASE}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    const res = await loginUser(username, password);
+    localStorage.setItem("token", res.access_token);
+    messageEl.textContent = "Login successful!";
+    messageEl.style.color = "#B185DB";
 
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem("token", data.access_token); // store JWT
-      window.location.href = "map.html"; // redirect to map
-    } else {
-      message.textContent = data.detail || "Login failed.";
-    }
+    // Redirect to home page after 1s
+    setTimeout(() => {
+      window.location.href = "home.html";
+    }, 1000);
   } catch (err) {
-    message.textContent = "Error connecting to server.";
+    messageEl.textContent = "Invalid username or password.";
+    messageEl.style.color = "red";
   }
 });
 
-// --- Handle register ---
+// --- REGISTER FORM ---
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const username = document.getElementById("registerUsername").value;
-  const password = document.getElementById("registerPassword").value;
+  const username = document.getElementById("registerUsername").value.trim();
+  const password = document.getElementById("registerPassword").value.trim();
 
   try {
-    const res = await fetch(`${API_BASE}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    await registerUser(username, password);
+    messageEl.textContent = "Registration successful! You can now log in.";
+    messageEl.style.color = "#B185DB";
 
-    const data = await res.json();
-    if (res.ok) {
-      message.textContent = "Registration successful. You can now log in.";
-    } else {
-      message.textContent = data.detail || "Registration failed.";
-    }
+    // Switch to login tab automatically
+    registerTab.classList.remove("active");
+    loginTab.classList.add("active");
+    registerForm.classList.remove("active");
+    loginForm.classList.add("active");
   } catch (err) {
-    message.textContent = "Error connecting to server.";
+    messageEl.textContent = "Username already taken or error occurred.";
+    messageEl.style.color = "red";
   }
 });
