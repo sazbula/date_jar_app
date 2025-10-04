@@ -5,7 +5,7 @@ from typing import Optional, List
 # -------- USER --------
 class UserCreate(BaseModel):
     username: str
-    password: str  # plain password, will be hashed before storing
+    password: str
 
 
 class UserOut(BaseModel):
@@ -13,7 +13,7 @@ class UserOut(BaseModel):
     username: str
 
     class Config:
-        from_attributes = True  # works with SQLAlchemy ORM objects
+        from_attributes = True
 
 
 # -------- TOKEN (for JWT login) --------
@@ -26,7 +26,7 @@ class Token(BaseModel):
 class IdeaBase(BaseModel):
     title: str
     note: str = ""
-    categories: List[str]  # list instead of CSV (we’ll join/split in models)
+    categories: List[str]
     is_public: bool = False
     is_home: bool = False
     lat: Optional[float] = None
@@ -44,6 +44,7 @@ class IdeaUpdate(IdeaBase):
 class IdeaOut(IdeaBase):
     id: int
     owner_id: int
+    owner_username: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -56,9 +57,3 @@ class FavoriteOut(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-# -------- TOKEN (for JWT login) --------
-class Token(BaseModel):
-    access_token: str
-    token_type: str

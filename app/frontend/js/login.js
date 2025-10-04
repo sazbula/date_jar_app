@@ -35,9 +35,9 @@ loginForm.addEventListener("submit", async (e) => {
     messageEl.textContent = "Login successful!";
     messageEl.style.color = "#B185DB";
 
-    // Redirect to home page after 1s
+    // Redirect to public page after 1s
     setTimeout(() => {
-      window.location.href = "home.html";
+      window.location.href = "public.html";
     }, 1000);
   } catch (err) {
     messageEl.textContent = "Invalid username or password.";

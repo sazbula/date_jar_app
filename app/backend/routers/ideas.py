@@ -218,22 +218,31 @@ def my_jar(
 
 # --- PUBLIC IDEAS ---
 @router.get("/public", response_model=List[schemas.IdeaOut])
-def public_ideas(db: Session = Depends(get_db)):
-    rows = db.query(models.Idea).filter(models.Idea.is_public == True).all()
-    return [
-        schemas.IdeaOut(
-            id=r.id,
-            owner_id=r.owner_id,
-            title=r.title,
-            note=r.note,
-            categories=json.loads(r.categories) if r.categories else [],
-            is_public=r.is_public,
-            is_home=r.is_home,
-            lat=r.lat,
-            lon=r.lon,
+def public_ideas(category: str | None = None, db: Session = Depends(get_db)):
+    query = db.query(models.Idea).filter(models.Idea.is_public == True)
+
+    rows = query.all()
+    results = []
+
+    for r in rows:
+        cats = json.loads(r.categories) if r.categories else []
+        # If a category is specified, skip those that don't include it
+        if category and category not in cats:
+            continue
+        results.append(
+            schemas.IdeaOut(
+                id=r.id,
+                owner_id=r.owner_id,
+                title=r.title,
+                note=r.note,
+                categories=cats,
+                is_public=r.is_public,
+                is_home=r.is_home,
+                lat=r.lat,
+                lon=r.lon,
+            )
         )
-        for r in rows
-    ]
+    return results
 
 
 # --- RANDOM IDEA ---

@@ -1,54 +1,78 @@
-// API base URL (update if your backend runs elsewhere)
+// --- API base URL ---
 const API_BASE = "http://127.0.0.1:8000/api/ideas";
 
-// Elements
+// --- DOM elements ---
 const ideasList = document.querySelector(".ideas-list");
 const categorySelect = document.querySelector(".category-select");
 
 // --- Fetch and render public ideas ---
 async function fetchPublicIdeas(category = "") {
   try {
-    // Use the correct endpoint for public ideas
     let url = `${API_BASE}/public`;
-    // Optionally filter by category if your backend supports it
-    if (category) {
-      url += `?category=${encodeURIComponent(category)}`;
-    }
+    if (category) url += `?category=${encodeURIComponent(category)}`;
 
     const res = await fetch(url);
+    if (!res.ok) throw new Error("Failed to fetch ideas.");
     const ideas = await res.json();
 
-    // Clear old ideas
+    // get user's saved ideas (jar)
+    const token = localStorage.getItem("token");
+    let savedIdeas = [];
+    if (token) {
+      const resJar = await fetch(`${API_BASE}/jar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resJar.ok) savedIdeas = await resJar.json();
+    }
+
     ideasList.innerHTML = "";
 
+    if (ideas.length === 0) {
+      ideasList.innerHTML = `<p>No ideas found in this category.</p>`;
+      return;
+    }
+
     // Render each idea
-    ideas.forEach(idea => {
+    ideas.forEach((idea) => {
       const item = document.createElement("div");
       item.classList.add("idea-item");
 
-      item.innerHTML = `
-        <div>
-          <h2 class="idea-title">${idea.title}</h2>
-          <p class="idea-note">${idea.note || ""}</p>
-        </div>
-        <button class="save-btn">❤️ Save</button>
-      `;
+      // check if idea already saved
+      const isSaved = savedIdeas.some((saved) => saved.id === idea.id);
+      const buttonText = isSaved ? "💖 Saved" : "❤️ Save";
+      const buttonDisabled = isSaved ? "disabled" : "";
 
-      // Save button action (adds to your jar)
+ item.innerHTML = `
+    <div>
+      <h2 class="idea-title">${idea.title}</h2>
+      <p class="idea-note">${idea.note || ""}</p>
+      <p class="idea-categories">
+        Categories: ${idea.categories ? idea.categories.join(", ") : "—"}
+      </p>
+    </div>
+    <button class="save-btn" ${buttonDisabled}>${buttonText}</button>
+  `;
+
       const saveBtn = item.querySelector(".save-btn");
-      saveBtn.addEventListener("click", () => saveToJar(idea));
+
+      if (!isSaved) {
+        saveBtn.addEventListener("click", () =>
+          saveToJar(idea.id, saveBtn)
+        );
+      } else {
+        saveBtn.style.opacity = "0.7";
+      }
 
       ideasList.appendChild(item);
     });
-
   } catch (err) {
     console.error("Error loading public ideas:", err);
-    ideasList.innerHTML = `<p style="color:red;">Failed to load public ideas.</p>`;
+    ideasList.innerHTML = `<p style="color:#A4161A;">Failed to load public ideas.</p>`;
   }
 }
 
 // --- Save idea to user's jar ---
-async function saveToJar(idea) {
+async function saveToJar(ideaId, buttonEl) {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -56,22 +80,23 @@ async function saveToJar(idea) {
       return;
     }
 
-    const res = await fetch(`${API_BASE}/save`, {
+    const res = await fetch(`${API_BASE}/heart/${ideaId}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ idea_id: idea.id })
+      headers: { Authorization: `Bearer ${token}` },
     });
 
+    const data = await res.json();
+
     if (res.ok) {
-      alert("Idea saved to your jar! 🎉");
+      buttonEl.textContent = "💖 Saved";
+      buttonEl.disabled = true;
+      buttonEl.style.opacity = "0.7";
     } else {
-      alert("Failed to save idea.");
+      alert(data.detail || "Failed to save idea.");
     }
   } catch (err) {
     console.error("Error saving idea:", err);
+    alert("Server error. Please try again later.");
   }
 }
 

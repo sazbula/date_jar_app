@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Date Jar - Public Ideas</title>
-  <link rel="stylesheet" href="public.css">
+
+  <!-- Shared and page styles -->
+  <link rel="stylesheet" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/public.css" />
   <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tangerine&display=swap" rel="stylesheet">
 </head>
+
 <body>
   <!-- Header -->
   <header class="header">
-    <h1 class="page-title">All Public Ideas</h1>
+    <h2 class="page-title">Public Ideas</h2>
   </header>
 
+  <!-- Controls -->
   <div class="controls">
-    <select class="btn category-select">
+    <select id="categoryFilter" class="btn category-select">
       <option value="">All Categories</option>
       <option value="outdoor">Outdoor</option>
-      <option value="at-home">At-home</option>
-      <option value="romantic">Romantic</option>
+      <option value="home">Home</option>
       <option value="artsy">Artsy</option>
       <option value="sports">Sports</option>
       <option value="party">Party</option>
       <option value="drinking">Drinking</option>
-      <option value="sports">Sports</option>
-      <option value="extra-romatic">Extra-romantic</option>
+      <option value="extra-romantic">Extra-romantic</option>
       <option value="food">Food</option>
       <option value="on-a-budget">On-a-budget</option>
       <option value="culture">Culture</option>
@@ -33,41 +36,23 @@
   </div>
 
   <!-- Public ideas list -->
-  <main class="ideas-list">
-    <div class="idea-item">
-      <div>
-        <h2 class="idea-title">Picnic in the Park</h2>
-        <p class="idea-note">Bring some snacks and enjoy the sun.</p>
-      </div>
-      <button class="save-btn">❤️ Save</button>
-    </div>
-
-    <div class="idea-item">
-      <div>
-        <h2 class="idea-title">Cooking Night</h2>
-        <p class="idea-note">Try making homemade sushi together.</p>
-      </div>
-      <button class="save-btn">❤️ Save</button>
-    </div>
+  <main id="ideasList" class="ideas-list">
+    <p>Loading ideas...</p>
   </main>
 
   <!-- Bottom nav -->
   <nav class="navbar">
-  <a href="map.html">Map</a>
-  <a href="jar.html">My Jar</a>  
-  <a href="public.html">Public Ideas</a>
-</nav>
+    <a href="map.html">Map</a>
+    <a href="jar.html">My Jar</a>
+    <a href="public.html" class="active">Public Ideas</a>
+  </nav>
 
+  <!-- Floating + button -->
+  <button class="add-button">+</button>
 
-  <!-- Floating add button -->
-<button class="add-button">+</button>
-
-<script>
-  document.querySelector(".add-button").addEventListener("click", () => {
-    window.location.href = "add.html";  // Redirect to Add page
-  });
-
-</script>
+  <!-- JS -->
+  <script type="module" src="./js/api.js"></script>
+  <script type="module" src="./js/public.js"></script>
 </body>
 </html>
 
