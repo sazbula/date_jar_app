@@ -1,57 +1,73 @@
-const res = await fetch("http://127.0.0.1:8000/api/ideas/public");
-const publicIdeas = await res.json();
+// --- API base URL ---
+const API_IDEAS = "http://127.0.0.1:8000/api/ideas";
 
-// Initialize map centered on Madrid
-const map = L.map('map').setView([40.4168, -3.7038], 13);
-
-// Add OpenStreetMap tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap contributors'
+// --- Initialize Leaflet Map ---
+const map = L.map("map").setView([40.4168, -3.7038], 12); // Default Madrid center
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap contributors",
 }).addTo(map);
 
-async function loadIdeas() {
-  const res = await fetch("http://127.0.0.1:8000/api/ideas");
-  const ideas = await res.json();
+// --- Load all public ideas ---
+async function loadPublicIdeas() {
+  try {
+    const res = await fetch(`${API_IDEAS}/public`);
+    if (!res.ok) throw new Error("Failed to load public ideas");
 
-  ideas.forEach(idea => {
-    if (idea.lat && idea.lon) {
-      L.marker([idea.lat, idea.lon])
-        .addTo(map)
-        .bindPopup(`<b>${idea.title}</b><br>${idea.note}`);
-    }
-  });
+    const ideas = await res.json();
+
+    ideas.forEach((idea) => {
+      // Skip ideas with no coordinates
+      if (!idea.lat || !idea.lon) return;
+
+      // Create marker
+      const marker = L.marker([idea.lat, idea.lon]).addTo(map);
+
+      // Build popup content
+      const popupHTML = `
+        <div class="popup-content">
+          <h3 class="popup-title">${idea.title}</h3>
+          <p>${idea.note || "No description"}</p>
+          <p><strong>Categories:</strong> ${idea.categories.join(", ")}</p>
+          <button class="popup-button" onclick="toggleSave(${idea.id})">
+            💖 Save
+          </button>
+        </div>
+      `;
+
+      marker.bindPopup(popupHTML);
+    });
+
+    console.log(`✅ Loaded ${ideas.length} public ideas`);
+
+  } catch (err) {
+    console.error("❌ Error loading ideas:", err);
+  }
 }
 
-loadIdeas();
+// --- Save / Heart a public idea ---
+async function toggleSave(ideaId) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Please log in first.");
+    return;
+  }
 
-// Add markers for each pin
-pins.forEach(pin => {
-  L.marker(pin.coords).addTo(map)
-    .bindPopup(`
-      <div class="popup-content">
-        <b class="popup-title">${pin.title}</b><br>
-        <button class="popup-button">Add</button>
-      </div>
-    `);
-});
+  try {
+    const res = await fetch(`${API_IDEAS}/heart/${ideaId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "accept": "application/json",
+      },
+    });
 
+    const data = await res.json();
+    alert(data.message || "Saved!");
+  } catch (err) {
+    console.error("❌ Error saving idea:", err);
+    alert("Server error, please try again.");
+  }
+}
 
-
-pins.forEach(pin => {
-  L.marker(pin.coords).addTo(map)
-    .bindPopup(`
-      <div class="popup-content">
-        <b class="popup-title">${pin.title}</b><br>
-        <button class="popup-button"> ❤️Add </button>
-      </div>
-    `);
-});
-
-document.querySelector(".add-button").addEventListener("click", () => {
-  window.location.href = "add.html";      
-});
-
-document.querySelector(".home-button").addEventListener("click", () => {
-  window.location.href = "home.html";  
-});
-
+// --- Run on load ---
+loadPublicIdeas();

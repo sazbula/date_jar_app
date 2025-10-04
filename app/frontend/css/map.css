@@ -1,49 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Tangerine', cursive;
+  background: #FFF8F0;
+}
+
+/* 🔹 Map */
 #map {
   height: 100vh;
   width: 100%;
+  z-index: 1;
 }
 
-/* Bottom navbar */
-.navbar {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: #FFF5EB;
-  padding: 1rem;            /* larger padding */
-  border-top: 1px solid #ddd;
-}
-
-.navbar a {
-  text-decoration: none;
-  font-size: 1.7rem;        /* larger font */
-  font-family: 'Tangerine', cursive;
-  font-weight: bold;
-  color: #800020;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: background 0.3s ease;
-}
-
-.navbar a:hover {
-  background: #FFE4EC;      /* light pink on hover */
-}
-
-.navbar a.active {
-  color: #A4161A;           /* burgundy highlight */
-  background: #FFE4EC;
-}
-
+/* 🔹 Floating Buttons */
 .floating-buttons {
   position: absolute;
-  bottom: 20px;
+  bottom: 80px;
   right: 20px;
   display: flex;
+  flex-direction: column;
   gap: 12px;
-  z-index: 9999; /* force on top */
+  z-index: 1001;
 }
 
-.add-button,
-.home-button {
+.add-button {
   background: #A4161A;
   color: white;
   font-size: 2rem;
@@ -56,28 +37,77 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.3s ease;
 }
 
-.add-button:hover,
-.home-button:hover {
+.add-button:hover:hover {
   background: #861313;
 }
 
+/* 🔹 Bottom Navbar */
+.navbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: #FFF5EB;
+  border-top: 1px solid #ddd;
+  padding: 0.8rem;
+  z-index: 1002;
+}
+
+.navbar a {
+  text-decoration: none;
+  font-size: 1.8rem;
+  color: #800020;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar a:hover {
+  color: #A4161A;
+  background: #FFE4EC;
+  border-radius: 8px;
+  padding: 0.2rem 0.8rem;
+}
+
+.navbar a.active {
+  color: #A4161A;
+  background: #FFE4EC;
+  border-radius: 8px;
+}
+
+/* 🔹 Popup style */
+.leaflet-popup-content-wrapper {
+  background: #FFF5EB;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.leaflet-popup-content {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #800020;
+}
 
 .popup-title {
   font-family: 'Tangerine', cursive;
-  font-size: 1.8rem;
+  font-size: 2rem;
   color: #A4161A;
+  margin-bottom: 4px;
 }
 
 .popup-button {
-  margin-top: 8px;
-  padding: 6px 14px;
   background: #FFE4EC;
   color: #800020;
   border: none;
   border-radius: 8px;
-  font-size: 1.1rem;
+  padding: 6px 14px;
+  font-family: 'Tangerine', cursive;
+  font-size: 1.5rem;
+  margin-top: 5px;
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -86,43 +116,30 @@
   background: #f7b6c8;
 }
 
-.leaflet-popup-content-wrapper {
-  background: #FFF5EB;
-  border-radius: 12px;
-  padding: 8px 12px;
-  max-width: 180px;
-}
-
-.leaflet-popup-content {
-  margin: 6px 8px;
+.popup-content {
+  font-family: 'Tangerine', cursive;
   text-align: center;
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: #FFF5EB;
-  padding: 0.8rem;
-  border-top: 1px solid #ddd;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1002; /* higher than map */
-}
-
-.navbar a {
-  text-decoration: none;
-  font-size: 1.2rem;
   color: #800020;
 }
 
-.navbar a.active {
-  font-weight: bold;
+.popup-title {
+  font-size: 2rem;
   color: #A4161A;
+  margin-bottom: 0.3rem;
 }
 
+.popup-button {
+  background: #FFE4EC;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #A4161A;
+  cursor: pointer;
+  font-family: 'Tangerine', cursive;
+  font-size: 1.5rem;
+  transition: all 0.2s ease;
+}
 
-
+.popup-button:hover {
+  background: #F8C6D2;
+}

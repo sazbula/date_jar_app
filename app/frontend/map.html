@@ -1,60 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Date Jar - Map</title>
+  <meta charset="UTF-8" />
+  <title>Date Jar – Map</title>
 
-  <!-- Shared Fonts -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Tangerine&display=swap" rel="stylesheet">
 
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-  <!-- Map-specific CSS -->
-  <link rel="stylesheet" href="map.css">
+  <!-- Custom Map CSS -->
+  <link rel="stylesheet" href="css/map.css">
 </head>
-<body>
-  <!-- Navbar Title -->
-  <div class="navbar">Date Jar Map</div>
 
-  <!-- Map Container -->
+<body>
+  <!-- 🌍 Fullscreen Map -->
   <div id="map"></div>
 
-  <!-- Floating Add Button -->
-<div class="floating-buttons">
-  <button class="home-button">🏠</button>
-  <button class="add-button">+</button>
-</div>
+  <!-- ➕ Floating Add Button -->
+  <div class="floating-buttons">
+    <button class="add-button" onclick="window.location.href='add.html'">+</button>
+  </div>
 
-
-<!-- Attach CSS + JS -->
-<link rel="stylesheet" href="add.css">
-<script src="add.js"></script>
-
-<!-- Add button modal styles -->
-<link rel="stylesheet" href="add.css">
-
-
-
+  <!-- 🧭 Bottom Navbar -->
+  <nav class="navbar">
+    <a href="map.html" class="active">Map</a>
+    <a href="jar.html">My Jar</a>
+    <a href="public.html">Public Ideas</a>
+  </nav>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <!-- Map-specific JS -->
-  <script src="map.js"></script>
-
-  <!-- Navbar -->
-<nav class="navbar">
-  <a href="map.html">Map</a>
-  <a href="jar.html">My Jar</a>
-  <a href="public.html">Public Ideas</a>
-</nav>
-
-
-
+  <!-- Your Map Logic -->
+  <script src="js/map.js"></script>
 </body>
 </html>
-</body>
-</html>
-
-  
