@@ -2,58 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Add New Date</title>
 
+  <title>Add New Date</title>
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tangerine&display=swap" rel="stylesheet">
-
+  <!-- Leaflet Map Library -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Styles -->
-  <link rel="stylesheet" href="add.css">
-  
+  <link rel="stylesheet" href="css/add.css">
 </head>
-<body class="add-page">
+
+<body>
   <main class="form-wrapper">
     <div class="form-card">
       <h1 class="form-title">Add New Date</h1>
+
       <form id="ideaForm">
+        <!-- Title and Note -->
         <input type="text" id="ideaTitle" placeholder="Title" required>
-        <textarea id="ideaNote" placeholder="Note"></textarea>
+        <textarea id="ideaNote" placeholder="Note (optional)"></textarea>
 
-        <select id="ideaCategory" class="category-select" required>
-          <option value="" disabled selected>Choose category</option>
-          <option value="outdoor">Outdoor</option>
-          <option value="home">At-home</option>
-          <option value="romantic">Romantic</option>
-          <option value="artsy">Artsy</option>
-          <option value="sports">Sports</option>
-          <option value="party">Party</option>
-          <option value="drinking">Drinking</option>
-          <option value="extra-romantic">Extra-romantic</option>
-          <option value="food">Food</option>
-          <option value="on-a-budget">On-a-budget</option>
-          <option value="culture">Culture</option>
-          <option value="self-care">Self-care</option>
-          <option value="learning">Learning</option>
-        </select>
+        <!-- Categories -->
+        <div class="categories-container">
+          <p class="categories-label">Categories (max 3)</p>
+          <div id="categoriesList">
+            <label><input type="checkbox" value="outdoor"> Outdoor</label>
+            <label><input type="checkbox" value="home"> At-home</label>
+            <label><input type="checkbox" value="artsy"> Artsy</label>
+            <label><input type="checkbox" value="sports"> Sports</label>
+            <label><input type="checkbox" value="party"> Party</label>
+            <label><input type="checkbox" value="drinking"> Drinking</label>
+            <label><input type="checkbox" value="extra-romantic"> Extra-romantic</label>
+            <label><input type="checkbox" value="food"> Food</label>
+            <label><input type="checkbox" value="on-a-budget"> On-a-budget</label>
+            <label><input type="checkbox" value="culture"> Culture</label>
+            <label><input type="checkbox" value="self-care"> Self-care</label>
+            <label><input type="checkbox" value="learning"> Learning</label>
+          </div>
+        </div>
 
-        <div class="checkboxes">
+        <!-- Public / Private -->
+        <div class="visibility-options">
           <label><input type="checkbox" id="isPublic"> Public</label>
           <label><input type="checkbox" id="isPrivate"> Private</label>
         </div>
 
-        <!-- 🔹 Add hidden fields for lat/lon -->
+        <!-- Hidden coords for map -->
         <input type="hidden" id="lat">
         <input type="hidden" id="lon">
 
+        <!-- Buttons -->
+        <button type="button" class="btn" id="pickLocationBtn">Pick location on map</button>
         <button type="submit" class="btn save-btn">Save Idea</button>
-      </form>
+
+<!-- Map Section -->
+<div id="locationSection" class="hidden">
+  <div id="map"></div>
+</div>
+
+        <!-- Map Section -->
+        <div id="locationSection" class="hidden">
+          <div id="map"></div>
+        </div>
+
+      <!-- Map  -->
+      <div id="map"></div>
     </div>
   </main>
 
-  <!-- 🔹 Map section under the form -->
-  <div id="map" style="height:400px;width:100%"></div>
-
-  <!-- Scripts -->
-  <script src="add.js"></script>
+  <!-- Script -->
+  <script src="js/add.js"></script>
 </body>
 </html>

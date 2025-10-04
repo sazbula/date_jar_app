@@ -1,91 +1,185 @@
-/* Only apply add page styles when body has class="add-page" */
-body.add-page {
-  margin: 0;
+body {
   font-family: 'Tangerine', cursive;
-  background: #FFF8F0; /* beige background */
+  background: #FFF8F0;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 50px;
 }
 
-/* Card (rectangle) */
-body.add-page .form-card {
+/* 🔹 Card container */
+.form-wrapper {
   background: #FFF5EB;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 400px;
-  max-width: 90%;
+  padding: 3rem 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 420px;
   text-align: center;
 }
 
-/* Title */
-body.add-page .form-title {
+.form-title {
   font-family: 'Monsieur La Doulaise', cursive;
   font-size: 3rem;
-  color: #800020; /* dark burgundy */
+  color: #A4161A;
   margin-bottom: 1.5rem;
 }
 
-/* Inputs */
-body.add-page form input,
-body.add-page form textarea,
-body.add-page form select {
-  display: block;
+/* 🔹 Inputs */
+input,
+textarea {
   width: 90%;
-  margin: 10px auto;
   padding: 10px;
-  border-radius: 6px;
+  margin: 8px 0;
   border: 1px solid #ddd;
-  font-size: 1.3rem;
+  border-radius: 8px;
+  font-size: 1.6rem;
   font-family: 'Tangerine', cursive;
-}
-
-/* Category dropdown styled like other buttons */
-body.add-page .category-select {
-  padding: 0.6rem 1.2rem;
-  background: #FFE4EC;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1.5rem;
+  background: #fff;
   color: #800020;
-  transition: background 0.3s ease;
 }
 
-body.add-page .category-select:hover {
-  background: #C92D3B;
-  color: white;
+textarea {
+  height: 80px;
+  resize: none;
 }
 
-/* Checkbox row */
-body.add-page .checkboxes {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin: 1rem 0;
+/* 🔹 Categories */
+.categories-container {
+  margin-top: 1rem;
 }
 
-body.add-page .checkboxes label {
-  font-size: 1.4rem;
+.categories-label {
   font-family: 'Tangerine', cursive;
   color: #A4161A;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
-/* Save button */
-body.add-page .btn.save-btn {
-  background: #A4161A;
+#categoriesList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 20px;
+  justify-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: #FFE4EC;
+  width: 90%;
+  margin: 0 auto;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+#categoriesList label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Tangerine', cursive;
+  font-size: 1.6rem;
+  color: #800020;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+#categoriesList label:hover {
+  color: #A4161A;
+  transform: scale(1.05);
+}
+
+/* Cute checkboxes 💕 */
+#categoriesList input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #A4161A;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+#categoriesList input[type="checkbox"]:checked {
+  background-color: #A4161A;
+  border-color: #A4161A;
+}
+
+#categoriesList input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: #fff;
+  position: absolute;
+  font-size: 14px;
+  top: -1px;
+  left: 3px;
+}
+
+/* 🔹 Public / Private */
+.visibility-options {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.visibility-options label {
+  font-family: 'Tangerine', cursive;
+  font-size: 2rem;
+  color: #A4161A;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.visibility-options input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #A4161A;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.visibility-options input[type="checkbox"]:checked {
+  background-color: #A4161A;
+  border-color: #A4161A;
+}
+
+/* 🔹 Buttons */
+button {
+  font-family: 'Tangerine', cursive;
+  font-size: 2rem;
+  background: #E63946;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 0.8rem 1.5rem;
-  font-size: 1.4rem;
-  font-family: 'Tangerine', cursive;
+  border-radius: 8px;
+  padding: 8px 16px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  margin-top: 1.2rem;
+  width: 70%;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-body.add-page .btn.save-btn:hover {
-  background: #861313;
+button:hover {
+  background: #C92D3B;
+  transform: translateY(-1px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+#map {
+  height: 350px;
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: block; 
+}
+
+#locationSection {
+  margin-top: 1.5rem;
+  transition: opacity 0.4s ease-in-out;
 }

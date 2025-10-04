@@ -107,3 +107,11 @@ categorySelect.addEventListener("change", () => {
 
 // --- Initial load ---
 fetchPublicIdeas();
+
+// --- Add button redirect ---
+const addButton = document.querySelector(".add-button");
+if (addButton) {
+  addButton.addEventListener("click", () => {
+    window.location.href = "add.html"; 
+  });
+}
