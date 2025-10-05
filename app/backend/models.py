@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Tabl
 from sqlalchemy.orm import relationship
 from app.backend.db import Base
 
-# --- Association table for many-to-many favorites ---
+# association table for many-to-many favorites
 favorites_table = Table(
     "favorites",
     Base.metadata,
@@ -16,9 +16,9 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
-    password_hash = Column(String)  # ⚡ store hashed passwords only
+    password_hash = Column(String)  # store hashed password only
 
-    # Relationships
+    # relationships
     ideas = relationship("Idea", back_populates="owner")
     favorites = relationship(
         "Idea",
@@ -33,7 +33,7 @@ class Idea(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     note = Column(String, default="")
-    categories = Column(String)  # store as "sporty,indoor"
+    categories = Column(String)  # stored as json string
     is_public = Column(Boolean, default=False)
     is_home = Column(Boolean, default=False)
     lat = Column(Float, nullable=True)

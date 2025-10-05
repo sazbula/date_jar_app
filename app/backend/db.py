@@ -7,7 +7,7 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./datejar.db"
 # Engine = actual DB connection
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},  # needed for SQLite in FastAPI
+    connect_args={"check_same_thread": False},
 )
 
 # Session = talk to DB

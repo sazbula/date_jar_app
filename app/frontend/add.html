@@ -2,79 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-
   <title>Add New Date</title>
-  <!-- Fonts -->
+
+  <!-- fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tangerine&display=swap" rel="stylesheet">
-  <!-- Leaflet Map Library -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Styles -->
+
+  <!-- leaflet map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- page styles -->
   <link rel="stylesheet" href="css/add.css">
 </head>
 
 <body>
   <main class="form-wrapper">
-    <div class="form-card">
-      <h1 class="form-title">Add New Date</h1>
+    <h1 class="form-title">Add New Date</h1>
 
-      <form id="ideaForm">
-        <!-- Title and Note -->
-        <input type="text" id="ideaTitle" placeholder="Title" required>
-        <textarea id="ideaNote" placeholder="Note (optional)"></textarea>
+    <form id="ideaForm">
+      <!-- title + note -->
+      <input type="text" id="ideaTitle" placeholder="Title" required>
+      <textarea id="ideaNote" placeholder="Note (optional)"></textarea>
 
-        <!-- Categories -->
-        <div class="categories-container">
-          <p class="categories-label">Categories (max 3)</p>
-          <div id="categoriesList">
-            <label><input type="checkbox" value="outdoor"> Outdoor</label>
-            <label><input type="checkbox" value="home"> At-home</label>
-            <label><input type="checkbox" value="artsy"> Artsy</label>
-            <label><input type="checkbox" value="sports"> Sports</label>
-            <label><input type="checkbox" value="party"> Party</label>
-            <label><input type="checkbox" value="drinking"> Drinking</label>
-            <label><input type="checkbox" value="extra-romantic"> Extra-romantic</label>
-            <label><input type="checkbox" value="food"> Food</label>
-            <label><input type="checkbox" value="on-a-budget"> On-a-budget</label>
-            <label><input type="checkbox" value="culture"> Culture</label>
-            <label><input type="checkbox" value="self-care"> Self-care</label>
-            <label><input type="checkbox" value="learning"> Learning</label>
-          </div>
+      <!-- categories -->
+      <div class="categories-container">
+        <p class="categories-label">Categories (max 3)</p>
+        <div id="categoriesList">
+          <label><input type="checkbox" value="outdoor"> Outdoor</label>
+          <label><input type="checkbox" value="home"> At-home</label>
+          <label><input type="checkbox" value="artsy"> Artsy</label>
+          <label><input type="checkbox" value="sports"> Sports</label>
+          <label><input type="checkbox" value="party"> Party</label>
+          <label><input type="checkbox" value="drinking"> Drinking</label>
+          <label><input type="checkbox" value="extra-romantic"> Extra-romantic</label>
+          <label><input type="checkbox" value="food"> Food</label>
+          <label><input type="checkbox" value="on-a-budget"> On-a-budget</label>
+          <label><input type="checkbox" value="culture"> Culture</label>
+          <label><input type="checkbox" value="self-care"> Self-care</label>
+          <label><input type="checkbox" value="learning"> Learning</label>
         </div>
+      </div>
 
-        <!-- Public / Private -->
-        <div class="visibility-options">
-          <label><input type="checkbox" id="isPublic"> Public</label>
-          <label><input type="checkbox" id="isPrivate"> Private</label>
-        </div>
+      <!-- visibility -->
+      <div class="visibility-options">
+        <label><input type="checkbox" id="isPublic"> Public</label>
+        <label><input type="checkbox" id="isPrivate"> Private</label>
+      </div>
 
-        <!-- Hidden coords for map -->
-        <input type="hidden" id="lat">
-        <input type="hidden" id="lon">
+      <!-- hidden location fields -->
+      <input type="hidden" id="lat">
+      <input type="hidden" id="lon">
 
-        <!-- Buttons -->
-        <button type="button" class="btn" id="pickLocationBtn">Pick location on map</button>
-        <button type="submit" class="btn save-btn">Save Idea</button>
+      <!-- buttons -->
+      <button type="button" id="pickLocationBtn">Pick location on map</button>
+      <button type="submit" class="save-btn">Save Idea</button>
 
-<!-- Map Section -->
-<div id="locationSection" class="hidden">
-  <div id="map"></div>
-</div>
-
-        <!-- Map Section -->
-        <div id="locationSection" class="hidden">
-          <div id="map"></div>
-        </div>
-
-      <!-- Map  -->
-      <div id="map"></div>
-    </div>
+      <!-- map -->
+      <div id="locationSection" class="hidden">
+        <div id="map"></div>
+      </div>
+    </form>
   </main>
 
-  <!-- Script -->
+  <!-- scripts -->
   <script src="js/add.js"></script>
 </body>
 </html>

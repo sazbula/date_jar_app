@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from typing import List
@@ -9,7 +9,7 @@ from app.backend import models, schemas, auth
 
 router = APIRouter(tags=["ideas"])
 
-# --- OAuth2 scheme to get token from Authorization header ---
+# auth setup
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
 
 
@@ -25,7 +25,7 @@ def get_current_user(
     return user
 
 
-# --- Allowed categories ---
+# category list
 ALLOWED_CATEGORIES = [
     "home",
     "outdoor",
@@ -48,14 +48,15 @@ def list_categories():
     return {"categories": ALLOWED_CATEGORIES}
 
 
-# --- CREATE IDEA ---
+# create idea
 @router.post("/", response_model=schemas.IdeaOut, status_code=201)
 def create_idea(
     payload: schemas.IdeaCreate,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    if not payload.categories or len(payload.categories) == 0:
+    # validate categories
+    if not payload.categories:
         raise HTTPException(status_code=400, detail="Must select at least one category")
     if len(payload.categories) > 3:
         raise HTTPException(status_code=400, detail="Max 3 categories allowed")
@@ -63,10 +64,12 @@ def create_idea(
         if cat not in ALLOWED_CATEGORIES:
             raise HTTPException(status_code=400, detail=f"Invalid category: {cat}")
 
+    # ignore coordinates for home ideas
     if "home" in payload.categories:
         payload.lat = None
         payload.lon = None
 
+    # save idea
     idea = models.Idea(
         owner_id=current_user.id,
         title=payload.title,
@@ -77,11 +80,11 @@ def create_idea(
         lat=payload.lat,
         lon=payload.lon,
     )
-
     db.add(idea)
     db.commit()
     db.refresh(idea)
 
+    # auto-add to user's jar
     current_user.favorites.append(idea)
     db.commit()
 
@@ -98,7 +101,7 @@ def create_idea(
     )
 
 
-# -------- HEART IDEA --------
+# add to jar
 @router.post("/heart/{idea_id}")
 def heart_idea(
     idea_id: int,
@@ -117,7 +120,7 @@ def heart_idea(
     return {"message": "Idea added to your jar"}
 
 
-# -------- UNHEART IDEA (works for both own & hearted) --------
+# remove from jar / delete
 @router.delete("/heart/{idea_id}")
 def unheart_idea(
     idea_id: int,
@@ -128,43 +131,37 @@ def unheart_idea(
     if not idea:
         raise HTTPException(status_code=404, detail="Idea not found")
 
-    # --- If user owns the idea ---
+    # own idea handling
     if idea.owner_id == current_user.id:
-        # If it's public → remove from favorites only (keep in public list)
         if idea.is_public:
             if idea in current_user.favorites:
                 current_user.favorites.remove(idea)
                 db.commit()
-            return {
-                "message": "Removed public idea from your jar, still visible to others"
-            }
+            return {"message": "Removed public idea from jar, still public"}
 
-        # If it's private → delete completely
         db.delete(idea)
         db.commit()
-        return {"message": "Private idea deleted from your jar"}
+        return {"message": "Private idea deleted"}
 
-    # --- If it's a hearted (not owned) idea ---
+    # hearted idea handling
     if idea in current_user.favorites:
         current_user.favorites.remove(idea)
         db.commit()
         return {"message": "Idea removed from your jar"}
 
-    # --- Otherwise not in jar ---
     raise HTTPException(status_code=404, detail="Idea not in your jar")
 
 
-# --- MY JAR (own + favorites) ---
+# my Jar (owned + hearted)
 @router.get("/jar", response_model=List[schemas.IdeaOut])
 def my_jar(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    # Get all user's ideas
     own = db.query(models.Idea).filter(models.Idea.owner_id == current_user.id).all()
-    hearted = current_user.favorites  # many-to-many relationship
+    hearted = current_user.favorites
 
-    # Remove public ideas the user owns (so they appear only if still hearted)
+    # hide public ones (they already appear in /public)
     visible_own = [idea for idea in own if not idea.is_public]
 
     rows = visible_own + hearted
@@ -184,17 +181,15 @@ def my_jar(
     ]
 
 
-# --- PUBLIC IDEAS ---
+# public ideas
 @router.get("/public", response_model=List[schemas.IdeaOut])
 def public_ideas(category: str | None = None, db: Session = Depends(get_db)):
     query = db.query(models.Idea).filter(models.Idea.is_public == True)
-
     rows = query.all()
-    results = []
 
+    results = []
     for r in rows:
         cats = json.loads(r.categories) if r.categories else []
-        # If a category is specified, skip those that don't include it
         if category and category not in cats:
             continue
         results.append(
@@ -213,6 +208,7 @@ def public_ideas(category: str | None = None, db: Session = Depends(get_db)):
     return results
 
 
+# random idea picker
 @router.get("/random", response_model=schemas.IdeaOut)
 def randomizer(
     category: str | None = None,
@@ -223,14 +219,15 @@ def randomizer(
     hearted = current_user.favorites
 
     jar = own + hearted
-    if category:
-        filtered = [
+    filtered = (
+        [
             i
             for i in jar
             if category in (json.loads(i.categories) if i.categories else [])
         ]
-    else:
-        filtered = jar  # ← if no category selected, use all ideas
+        if category
+        else jar
+    )
 
     if not filtered:
         raise HTTPException(status_code=404, detail="No ideas in this category")

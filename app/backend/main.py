@@ -17,11 +17,11 @@ def custom_openapi():
         description="API for Date Jar App",
         routes=app.routes,
     )
-    # Define simple JWT bearer auth
+    # define simple JWT bearer auth
     openapi_schema["components"]["securitySchemes"] = {
         "BearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
     }
-    # Apply it globally so all endpoints require it (unless overridden)
+    # apply globally
     openapi_schema["security"] = [{"BearerAuth": []}]
     app.openapi_schema = openapi_schema
     return app.openapi_schema
@@ -32,7 +32,7 @@ app.openapi = custom_openapi
 # CORS (allow frontend calls from file:// or localhost)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # for dev, can restrict later
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -101,9 +101,9 @@ form button[type="submit"]:hover {
 
 .corner-logo {
   position: absolute;
-  top: 10px;     /* closer to very top */
-  left: 10px;    /* closer to left edge */
-  width: 150px;   /* bigger size */
+  top: 10px;    
+  left: 10px;   
+  width: 150px;   
   height: auto;
 }
 
@@ -111,9 +111,9 @@ form button[type="submit"]:hover {
   position: absolute;
   bottom: 20px;
   right: 20px;
-  background: #A4161A;   /* burgundy */
+  background: #A4161A;   
   color: white;
-  font-family: sans-serif; /* regular font */
+  font-family: sans-serif; 
   font-size: 2rem;
   width: 60px;
   height: 60px;
@@ -125,5 +125,5 @@ form button[type="submit"]:hover {
 }
 
 .add-button:hover {
-  background: #861313; /* darker burgundy on hover */
+  background: #861313; 
 }

@@ -50,17 +50,17 @@ body {
 
 .category-select {
   display: block;
-  margin: 0 auto;               /* center it horizontally */
-  width: 200px;                 /* make it smaller */
+  margin: 0 auto;               
+  width: 200px;                 
   font-size: 1.3rem;
   padding: 0.6rem 0.8rem;
-  border-radius: 25px;          /* rounded pill shape */
+  border-radius: 25px;          
   background: #FFE4EC;
-  border: 2px solid #F8C8D8;    /* soft pink border */
+  border: 2px solid #F8C8D8;    
   color: #800020;
   text-align: center;
   font-family: 'Tangerine', cursive;
-  appearance: none;             /* remove default arrow styling */
+  appearance: none;             
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -121,13 +121,13 @@ body {
   justify-content: space-around;
   align-items: center;
   background: #FFF5EB;
-  padding: 1rem;            /* larger padding */
+  padding: 1rem;            
   border-top: 1px solid #ddd;
 }
 
 .navbar a {
   text-decoration: none;
-  font-size: 1.4rem;        /* larger font */
+  font-size: 1.4rem;       
   font-family: 'Tangerine', cursive;
   font-weight: bold;
   color: #800020;
@@ -137,11 +137,11 @@ body {
 }
 
 .navbar a:hover {
-  background: #FFE4EC;      /* light pink on hover */
+  background: #FFE4EC;      
 }
 
 .navbar a.active {
-  color: #A4161A;           /* burgundy highlight */
+  color: #A4161A;           
   background: #FFE4EC;
 }
 
@@ -158,7 +158,7 @@ body {
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-family: sans-serif; /* regular font */
+  font-family: sans-serif; 
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   z-index: 1000;
 }

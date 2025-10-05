@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 
-# -------- USER --------
+# user schemas
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -16,13 +16,13 @@ class UserOut(BaseModel):
         from_attributes = True
 
 
-# -------- TOKEN (for JWT login) --------
+# token schema (used for jwt auth)
 class Token(BaseModel):
     access_token: str
     token_type: str
 
 
-# -------- IDEA --------
+# idea schemas
 class IdeaBase(BaseModel):
     title: str
     note: str = ""
@@ -50,7 +50,7 @@ class IdeaOut(IdeaBase):
         from_attributes = True
 
 
-# -------- FAVORITE --------
+# favorite schema
 class FavoriteOut(BaseModel):
     user_id: int
     idea_id: int

@@ -1,3 +1,4 @@
+/* base layout */
 body {
   font-family: 'Tangerine', cursive;
   background: #FFF8F0;
@@ -8,7 +9,7 @@ body {
   padding-top: 50px;
 }
 
-/* 🔹 Card container */
+/* form card */
 .form-wrapper {
   background: #FFF5EB;
   padding: 3rem 2.5rem;
@@ -25,7 +26,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* 🔹 Inputs */
+/* text fields */
 input,
 textarea {
   width: 90%;
@@ -44,7 +45,7 @@ textarea {
   resize: none;
 }
 
-/* 🔹 Categories */
+/* categories */
 .categories-container {
   margin-top: 1rem;
 }
@@ -85,7 +86,7 @@ textarea {
   transform: scale(1.05);
 }
 
-/* Cute checkboxes 💕 */
+/* checkbox styles */
 #categoriesList input[type="checkbox"] {
   appearance: none;
   width: 18px;
@@ -112,7 +113,7 @@ textarea {
   left: 3px;
 }
 
-/* 🔹 Public / Private */
+/* visibility checkboxes */
 .visibility-options {
   display: flex;
   justify-content: center;
@@ -136,7 +137,6 @@ textarea {
   border: 2px solid #A4161A;
   border-radius: 50%;
   cursor: pointer;
-  position: relative;
   background: #fff;
   transition: all 0.3s ease;
 }
@@ -146,7 +146,7 @@ textarea {
   border-color: #A4161A;
 }
 
-/* 🔹 Buttons */
+/* buttons */
 button {
   font-family: 'Tangerine', cursive;
   font-size: 2rem;
@@ -166,6 +166,7 @@ button:hover {
   transform: translateY(-1px);
 }
 
+/* map visibility */
 .hidden {
   display: none !important;
 }
@@ -176,7 +177,7 @@ button:hover {
   margin-top: 15px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  display: block; 
+  display: block;
 }
 
 #locationSection {

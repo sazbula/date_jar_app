@@ -1,5 +1,27 @@
+## TO RUN THE APP:
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 
-RUN: python -m pytest -v
+# in terminal run backend command:
+uvicorn app.backend.main:app --reload
+
+# split terminal run frontend command:
+app % python -m http.server 5500
+
+# paste login page link in your browser:
+http://[::]:5500/frontend/login.html
+
+
+
+
+## FOR TESTING:
+
+# RUN: 
+python -m pytest -v
+# RUN: 
+pytest --cov=app/backend --cov-report=term-missing -v
+
 # conftest.py
 
 This file sets up the testing environment for the backend. It creates a temporary SQLite database so tests don’t affect real data, resets the database before each test to keep results isolated, and provides a FastAPI TestClient that allows sending fake HTTP requests to the app (like POST or GET) without running a real server.

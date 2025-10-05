@@ -20,7 +20,7 @@ async function loadMyJar() {
 
     let ideas = await res.json();
 
-    // 🩵 Apply category filter (frontend side)
+    //  Apply category filter (frontend side)
     const selectedCategory = document.querySelector("#categorySelect").value;
     if (selectedCategory) {
       ideas = ideas.filter((idea) => idea.categories.includes(selectedCategory));
