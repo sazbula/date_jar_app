@@ -1,3 +1,4 @@
+/* Global page style */
 body {
   margin: 0;
   font-family: 'Tangerine', cursive;
@@ -10,53 +11,76 @@ body {
 /* Header */
 .header {
   text-align: center;
-  padding: 1rem 0;
   background: #FFF5EB;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: 'Monsieur La Doulaise', cursive;
+  color: #A4161A;
+  font-size: 2.3rem;
+  padding: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.small-logo {
+.header .small-logo {
   font-family: 'Monsieur La Doulaise', cursive;
-  font-size: 2rem;
+  font-size: 3.6rem;
   color: #A4161A;
-  margin: 0;
+  margin: 0.25rem 0 0;
+  text-shadow: 1px 1px 2px rgba(164, 22, 26, 0.18);
 }
 
 .logo-big {
-  margin-top: 1rem;
-  width: 250px;
+  display: block;
+  margin: 0.25rem auto 0;
+  width: 220px;
   height: auto;
 }
 
-/* Controls row */
+/* Controls */
 .controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
+  background: #FFF5EB;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Shared button style */
+/* Buttons */
 .btn {
+  font-family: 'Tangerine', cursive;
+  font-size: 1.6rem;
   padding: 0.6rem 1.2rem;
+  border-radius: 25px;
   background: #FFE4EC;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
+  border: 2px solid #F8C8D8;
   color: #800020;
-  transition: background 0.3s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .btn:hover {
-  background: #C92D3B;
+  background: #A4161A;
   color: white;
+  transform: scale(1.03);
 }
 
-/* Category dropdown */
+/* Dropdown */
 .category-select {
-  font-size: 1rem;
-  padding: 0.5rem;
+  font-family: 'Tangerine', cursive;
+  font-size: 1.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  background: #FFE4EC;
+  border: 2px solid #F8C8D8;
+  color: #800020;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+}
+
+.category-select:hover {
+  background: #A4161A;
+  color: white;
+  transform: scale(1.03);
 }
 
 /* Ideas list */
@@ -71,60 +95,82 @@ body {
   border-radius: 10px;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.idea-text {
+  font-size: 1.5rem;
+  flex: 1;
+}
+
 .idea-title {
-  font-size: 1.8rem;
+  font-size: 2.5rem;
   color: #A4161A;
+  font-family: 'Tangerine', cursive;
   margin: 0;
 }
 
 .idea-note {
-  font-size: 1.2rem;
+  font-size: 1.7rem;
   color: #333;
   margin: 0.3rem 0 0 0;
+  font-style: italic;
 }
 
-/* Bottom navbar */
+/* Remove button */
+.idea-item .btn {
+  font-size: 1.1rem;
+  border-radius: 25px;
+  border: 2px solid #F8C8D8;
+}
+
+.idea-item .btn:hover {
+  background: #A4161A;
+  color: white;
+}
+
+/* Navbar */
 .navbar {
   display: flex;
   justify-content: space-around;
   align-items: center;
   background: #FFF5EB;
-  padding: 1rem;            /* larger padding */
+  padding: 1rem;
   border-top: 1px solid #ddd;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
 }
 
 .navbar a {
   text-decoration: none;
-  font-size: 1.4rem;        /* larger font */
+  font-size: 1.6rem;
   font-family: 'Tangerine', cursive;
   font-weight: bold;
   color: #800020;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 8px;
   transition: background 0.3s ease;
 }
 
 .navbar a:hover {
-  background: #FFE4EC;      /* light pink on hover */
-}
-
-.navbar a.active {
-  color: #A4161A;           /* burgundy highlight */
   background: #FFE4EC;
 }
 
-/* Floating + button */
+.navbar a.active {
+  color: #A4161A;
+  background: #FFE4EC;
+}
+
+/* Add button */
 .add-button {
   position: fixed;
-  bottom: 80px;             /* sits above navbar */
+  bottom: 80px;
   right: 20px;
-  background: #A4161A;      /* burgundy */
+  background: #A4161A;
   color: white;
   font-size: 2rem;
   width: 60px;
@@ -132,10 +178,39 @@ body {
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
 }
 
 .add-button:hover {
-  background: #861313;      /* darker burgundy */
+  background: #861313;
+}
+
+  .corner-logo {
+  position: absolute;
+  top: 10px;     
+  left: 10px;    
+  width: 150px;   
+}
+
+
+.logout-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background-color: #c7abe0;   /* 💜 your chosen color */
+  color: #861313;
+  border: none;
+  border-radius: 25px;
+  padding: 0.5rem 1rem;
+  font-size: 1.6rem;
+  font-family: 'Tangerine', cursive;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #a06bd5;   /* slightly darker on hover */
+  transform: scale(1.05);
 }

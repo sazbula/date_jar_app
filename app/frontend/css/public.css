@@ -185,3 +185,10 @@ body {
   font-weight: bold;
   color: #f39fbb;
 }
+
+  .corner-logo {
+  position: absolute;
+  top: 10px;     
+  left: 10px;    
+  width: 150px;   
+}

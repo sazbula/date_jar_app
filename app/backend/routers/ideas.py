@@ -77,82 +77,25 @@ def create_idea(
         lat=payload.lat,
         lon=payload.lon,
     )
+
     db.add(idea)
     db.commit()
     db.refresh(idea)
 
-    return schemas.IdeaOut(
-        id=idea.id,
-        owner_id=idea.owner_id,
-        title=idea.title,
-        note=idea.note,
-        categories=payload.categories,
-        is_public=idea.is_public,
-        is_home=idea.is_home,
-        lat=idea.lat,
-        lon=idea.lon,
-    )
-
-
-# --- EDIT IDEA ---
-@router.put("/{idea_id}", response_model=schemas.IdeaOut)
-def edit_idea(
-    idea_id: int,
-    payload: schemas.IdeaUpdate,
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
-):
-    idea = db.query(models.Idea).get(idea_id)
-    if not idea or idea.owner_id != current_user.id:
-        raise HTTPException(status_code=404, detail="Idea not found or not yours")
-
-    if not payload.categories or len(payload.categories) == 0:
-        raise HTTPException(status_code=400, detail="Must select at least one category")
-    if len(payload.categories) > 3:
-        raise HTTPException(status_code=400, detail="Max 3 categories allowed")
-
-    if "home" in payload.categories:
-        payload.lat = None
-        payload.lon = None
-
-    idea.title = payload.title
-    idea.note = payload.note
-    idea.categories = json.dumps(payload.categories)
-    idea.is_public = payload.is_public
-    idea.is_home = payload.is_home
-    idea.lat = payload.lat
-    idea.lon = payload.lon
-
+    current_user.favorites.append(idea)
     db.commit()
-    db.refresh(idea)
 
     return schemas.IdeaOut(
         id=idea.id,
         owner_id=idea.owner_id,
         title=idea.title,
         note=idea.note,
-        categories=payload.categories,
+        categories=json.loads(idea.categories) if idea.categories else [],
         is_public=idea.is_public,
         is_home=idea.is_home,
         lat=idea.lat,
         lon=idea.lon,
     )
-
-
-# --- DELETE IDEA ---
-@router.delete("/{idea_id}", status_code=204)
-def delete_idea(
-    idea_id: int,
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user),
-):
-    idea = db.query(models.Idea).get(idea_id)
-    if not idea or idea.owner_id != current_user.id:
-        raise HTTPException(status_code=404, detail="Idea not found or not yours")
-
-    db.delete(idea)
-    db.commit()
-    return
 
 
 # -------- HEART IDEA --------
@@ -174,7 +117,7 @@ def heart_idea(
     return {"message": "Idea added to your jar"}
 
 
-# -------- UNHEART IDEA --------
+# -------- UNHEART IDEA (works for both own & hearted) --------
 @router.delete("/heart/{idea_id}")
 def unheart_idea(
     idea_id: int,
@@ -182,12 +125,33 @@ def unheart_idea(
     current_user: models.User = Depends(get_current_user),
 ):
     idea = db.query(models.Idea).get(idea_id)
-    if not idea or idea not in current_user.favorites:
-        raise HTTPException(status_code=404, detail="Not in your jar")
+    if not idea:
+        raise HTTPException(status_code=404, detail="Idea not found")
 
-    current_user.favorites.remove(idea)
-    db.commit()
-    return {"message": "Idea removed from your jar"}
+    # --- If user owns the idea ---
+    if idea.owner_id == current_user.id:
+        # If it's public → remove from favorites only (keep in public list)
+        if idea.is_public:
+            if idea in current_user.favorites:
+                current_user.favorites.remove(idea)
+                db.commit()
+            return {
+                "message": "Removed public idea from your jar, still visible to others"
+            }
+
+        # If it's private → delete completely
+        db.delete(idea)
+        db.commit()
+        return {"message": "Private idea deleted from your jar"}
+
+    # --- If it's a hearted (not owned) idea ---
+    if idea in current_user.favorites:
+        current_user.favorites.remove(idea)
+        db.commit()
+        return {"message": "Idea removed from your jar"}
+
+    # --- Otherwise not in jar ---
+    raise HTTPException(status_code=404, detail="Idea not in your jar")
 
 
 # --- MY JAR (own + favorites) ---
@@ -196,10 +160,14 @@ def my_jar(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
+    # Get all user's ideas
     own = db.query(models.Idea).filter(models.Idea.owner_id == current_user.id).all()
     hearted = current_user.favorites  # many-to-many relationship
 
-    rows = own + hearted
+    # Remove public ideas the user owns (so they appear only if still hearted)
+    visible_own = [idea for idea in own if not idea.is_public]
+
+    rows = visible_own + hearted
     return [
         schemas.IdeaOut(
             id=r.id,
@@ -245,10 +213,9 @@ def public_ideas(category: str | None = None, db: Session = Depends(get_db)):
     return results
 
 
-# --- RANDOM IDEA ---
 @router.get("/random", response_model=schemas.IdeaOut)
 def randomizer(
-    category: str,
+    category: str | None = None,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -256,9 +223,15 @@ def randomizer(
     hearted = current_user.favorites
 
     jar = own + hearted
-    filtered = [
-        i for i in jar if category in (json.loads(i.categories) if i.categories else [])
-    ]
+    if category:
+        filtered = [
+            i
+            for i in jar
+            if category in (json.loads(i.categories) if i.categories else [])
+        ]
+    else:
+        filtered = jar  # ← if no category selected, use all ideas
+
     if not filtered:
         raise HTTPException(status_code=404, detail="No ideas in this category")
 

@@ -15,37 +15,60 @@ async function loadPublicIdeas() {
 
     const ideas = await res.json();
 
-    ideas.forEach((idea) => {
-      // Skip ideas with no coordinates
-      if (!idea.lat || !idea.lon) return;
+    // Fetch user's saved ideas (jar)
+    const token = localStorage.getItem("token");
+    let savedIdeas = [];
+    if (token) {
+      try {
+        const resJar = await fetch(`${API_IDEAS}/jar`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (resJar.ok) savedIdeas = await resJar.json();
+      } catch (err) {
+        console.warn("Could not load user jar:", err);
+      }
+    }
 
-      // Create marker
+    ideas.forEach((idea) => {
+      if (!idea.lat || !idea.lon) return; // Skip ideas with no coordinates
+
       const marker = L.marker([idea.lat, idea.lon]).addTo(map);
 
-      // Build popup content
+      // --- Check if idea is already saved ---
+      const isSaved = savedIdeas.some((saved) => saved.id === idea.id);
+      const buttonHTML = isSaved
+        ? `<button class="popup-button" disabled style="opacity:0.7;">💖 Saved</button>`
+        : `<button class="popup-button" id="save-btn-${idea.id}">❤️ Save</button>`;
+
+      // --- Popup HTML ---
       const popupHTML = `
         <div class="popup-content">
           <h3 class="popup-title">${idea.title}</h3>
-          <p>${idea.note || "No description"}</p>
+          <p>${idea.note || "No description provided"}</p>
           <p><strong>Categories:</strong> ${idea.categories.join(", ")}</p>
-          <button class="popup-button" onclick="toggleSave(${idea.id})">
-            💖 Save
-          </button>
+          ${buttonHTML}
         </div>
       `;
 
       marker.bindPopup(popupHTML);
+
+      // --- Attach click handler when popup opens ---
+      marker.on("popupopen", () => {
+        const btn = document.getElementById(`save-btn-${idea.id}`);
+        if (btn) {
+          btn.addEventListener("click", () => toggleSave(idea.id, btn));
+        }
+      });
     });
 
-    console.log(`✅ Loaded ${ideas.length} public ideas`);
-
+    console.log(`Loaded ${ideas.length} public ideas`);
   } catch (err) {
-    console.error("❌ Error loading ideas:", err);
+    console.error("Error loading ideas:", err);
   }
 }
 
 // --- Save / Heart a public idea ---
-async function toggleSave(ideaId) {
+async function toggleSave(ideaId, buttonEl) {
   const token = localStorage.getItem("token");
   if (!token) {
     alert("Please log in first.");
@@ -56,16 +79,24 @@ async function toggleSave(ideaId) {
     const res = await fetch(`${API_IDEAS}/heart/${ideaId}`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "accept": "application/json",
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
       },
     });
 
     const data = await res.json();
-    alert(data.message || "Saved!");
+
+    if (res.ok) {
+      // Instantly update button state
+      buttonEl.textContent = "💖 Saved";
+      buttonEl.disabled = true;
+      buttonEl.style.opacity = "0.7";
+    } else {
+      alert(data.detail || "Failed to save idea.");
+    }
   } catch (err) {
-    console.error("❌ Error saving idea:", err);
-    alert("Server error, please try again.");
+    console.error("Error saving idea:", err);
+    alert("Server error, please try again later.");
   }
 }
 
