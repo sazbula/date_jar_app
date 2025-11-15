@@ -100,6 +100,7 @@ async function saveToJar(ideaId, buttonEl) {
   }
 }
 
+
 // --- Category filter ---
 categorySelect.addEventListener("change", () => {
   fetchPublicIdeas(categorySelect.value);

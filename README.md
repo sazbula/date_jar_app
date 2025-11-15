@@ -1,7 +1,7 @@
 ## TO RUN THE APP:
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+
 
 # in terminal run backend command:
 uvicorn app.backend.main:app --reload
