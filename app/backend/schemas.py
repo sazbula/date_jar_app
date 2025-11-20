@@ -1,8 +1,11 @@
 from pydantic import BaseModel
 from typing import Optional, List
+import json
 
 
-# user schemas
+# User Schemas
+
+
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -16,13 +19,17 @@ class UserOut(BaseModel):
         from_attributes = True
 
 
-# token schema (used for jwt auth)
+# Token Schema (JWT)
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
 
 
-# idea schemas
+# Idea Schemas
+
+
 class IdeaBase(BaseModel):
     title: str
     note: str = ""
@@ -50,10 +57,34 @@ class IdeaOut(IdeaBase):
         from_attributes = True
 
 
-# favorite schema
+# Favorite Schema
+
+
 class FavoriteOut(BaseModel):
     user_id: int
     idea_id: int
 
     class Config:
         from_attributes = True
+
+
+# Conversion Helpers
+
+
+def idea_to_out(model):
+    """
+    Convert SQLAlchemy Idea model -> IdeaOut schema.
+    Keeps routers and services clean.
+    """
+    return IdeaOut(
+        id=model.id,
+        owner_id=model.owner_id,
+        owner_username=getattr(model.owner, "username", None),
+        title=model.title,
+        note=model.note,
+        categories=json.loads(model.categories) if model.categories else [],
+        is_public=model.is_public,
+        is_home=model.is_home,
+        lat=model.lat,
+        lon=model.lon,
+    )

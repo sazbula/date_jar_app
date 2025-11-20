@@ -1,8 +1,9 @@
+from typing import List
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
 from app.backend.db import Base
 
-# association table for many-to-many favorites
+# Association table: user favorites an idea
 favorites_table = Table(
     "favorites",
     Base.metadata,
@@ -14,13 +15,15 @@ favorites_table = Table(
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    password_hash = Column(String)  # store hashed password only
+    id: int = Column(Integer, primary_key=True, index=True)
+    username: str = Column(String(50), unique=True, index=True)
+    password_hash: str = Column(String(200))  # hashed password only
 
-    # relationships
-    ideas = relationship("Idea", back_populates="owner")
-    favorites = relationship(
+    # One-to-many: user → ideas
+    ideas: List["Idea"] = relationship("Idea", back_populates="owner")
+
+    # Many-to-many: user ↔ ideas (favorites)
+    favorites: List["Idea"] = relationship(
         "Idea",
         secondary=favorites_table,
         back_populates="favorited_by",
@@ -30,19 +33,23 @@ class User(Base):
 class Idea(Base):
     __tablename__ = "ideas"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    note = Column(String, default="")
-    categories = Column(String)  # stored as json string
-    is_public = Column(Boolean, default=False)
-    is_home = Column(Boolean, default=False)
-    lat = Column(Float, nullable=True)
-    lon = Column(Float, nullable=True)
+    id: int = Column(Integer, primary_key=True, index=True)
+    title: str = Column(String(200), index=True)
+    note: str = Column(String(500), default="")
+    categories: str = Column(String)  # stored as JSON string
+    is_public: bool = Column(Boolean, default=False)
+    is_home: bool = Column(Boolean, default=False)
+    lat: float | None = Column(Float, nullable=True)
+    lon: float | None = Column(Float, nullable=True)
 
-    owner_id = Column(Integer, ForeignKey("users.id"))
-    owner = relationship("User", back_populates="ideas")
+    # Foreign key
+    owner_id: int = Column(Integer, ForeignKey("users.id"))
 
-    favorited_by = relationship(
+    # Reverse relationship
+    owner: "User" = relationship("User", back_populates="ideas")
+
+    # Many-to-many reverse: idea ↔ users
+    favorited_by: List["User"] = relationship(
         "User",
         secondary=favorites_table,
         back_populates="favorites",

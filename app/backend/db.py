@@ -24,3 +24,15 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+#  DB initialization function
+def init_db():
+    """
+    Initialize the database tables.
+    Must be called manually — NOT from main.py.
+    """
+    # Import models inside the function so Base knows them
+    from app.backend import models
+
+    Base.metadata.create_all(bind=engine)
