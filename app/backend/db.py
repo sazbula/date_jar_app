@@ -5,19 +5,18 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # PostgreSQL connection
 # ---------------------------------------------------
 
-# If Postgres user has no password
-SQLALCHEMY_DATABASE_URL = "postgresql://sabinabacaoanu@localhost:5432/datejar"
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/datejar"
+)
+
+engine = create_engine(DATABASE_URL)
 # If i ever use password:
 # SQLALCHEMY_DATABASE_URL = "postgresql://sabinabacaoanu:YOUR_PASSWORD@localhost:5432/datejar"
 
-
-# Important: enable psycopg properly
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    future=True,
-    echo=False,
-)
 
 # Session = handle DB connection per request
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
