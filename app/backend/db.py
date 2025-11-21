@@ -1,23 +1,34 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Local SQLite database
-SQLALCHEMY_DATABASE_URL = "sqlite:///./datejar.db"
+# ---------------------------------------------------
+# PostgreSQL connection
+# ---------------------------------------------------
 
-# Engine = actual DB connection
+# If Postgres user has no password
+SQLALCHEMY_DATABASE_URL = "postgresql://sabinabacaoanu@localhost:5432/datejar"
+
+# If i ever use password:
+# SQLALCHEMY_DATABASE_URL = "postgresql://sabinabacaoanu:YOUR_PASSWORD@localhost:5432/datejar"
+
+
+# Important: enable psycopg properly
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
+    future=True,
+    echo=False,
 )
 
-# Session = talk to DB
+# Session = handle DB connection per request
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class = all models will inherit from this
+# Base class for all ORM models
 Base = declarative_base()
 
 
-# Dependency for FastAPI routes
+# ---------------------------------------------------
+# FastAPI dependency
+# ---------------------------------------------------
 def get_db():
     db = SessionLocal()
     try:
@@ -26,13 +37,15 @@ def get_db():
         db.close()
 
 
-#  DB initialization function
+# ---------------------------------------------------
+# DB initialization
+# ---------------------------------------------------
 def init_db():
     """
     Initialize the database tables.
-    Must be called manually — NOT from main.py.
+    Call this manually (python shell).
     """
-    # Import models inside the function so Base knows them
+
     from app.backend import models
 
     Base.metadata.create_all(bind=engine)
