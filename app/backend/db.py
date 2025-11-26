@@ -1,27 +1,22 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-
-# ---------------------------------------------------
-# PostgreSQL connection
-# ---------------------------------------------------
-
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 
+# ---------------------------------------------------
+# DATABASE URL
+# ---------------------------------------------------
+# Reads from Azure App Settings (DATABASE_URL)
 DATABASE_URL = os.getenv(
     "DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/datejar"
 )
 
+# Create SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
-# If i ever use password:
-# SQLALCHEMY_DATABASE_URL = "postgresql://sabinabacaoanu:YOUR_PASSWORD@localhost:5432/datejar"
 
-
-# Session = handle DB connection per request
+# Session local factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for all ORM models
+# Base for ORM models
 Base = declarative_base()
 
 
@@ -37,14 +32,13 @@ def get_db():
 
 
 # ---------------------------------------------------
-# DB initialization
+# Manual DB initialization (optional local use)
 # ---------------------------------------------------
 def init_db():
     """
-    Initialize the database tables.
-    Call this manually (python shell).
+    Initialize database tables (local development use).
+    In Azure, tables are created automatically on startup.
     """
-
     from app.backend import models
 
     Base.metadata.create_all(bind=engine)
