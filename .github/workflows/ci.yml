@@ -15,6 +15,9 @@ jobs:
     name: "Run tests and coverage"
     runs-on: ubuntu-latest
 
+    env:
+      TESTING: "true"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,11 +33,11 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Run tests with coverage (fail under 70%)
+      - name: Run tests with coverage
         run: |
           pytest --cov=app --cov-report=term-missing --cov-fail-under=70
 
-  # ----------------- BUILD AND PUSH DOCKER IMAGE -----------------
+  # ----------------- BUILD IMAGE -----------------
   docker:
     name: "Build & push Docker image to Docker Hub"
     runs-on: ubuntu-latest
@@ -55,17 +58,13 @@ jobs:
         run: |
           IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/datejar-backend"
           TAG="${{ github.sha }}"
-
-          echo "Building image: ${IMAGE_NAME}:${TAG}"
           docker build -t "${IMAGE_NAME}:${TAG}" -t "${IMAGE_NAME}:latest" .
-
-          echo "Pushing image..."
           docker push "${IMAGE_NAME}:${TAG}"
           docker push "${IMAGE_NAME}:latest"
 
-  # ----------------- DEPLOY TO AZURE WEB APP -----------------
+  # ----------------- DEPLOY -----------------
   deploy:
-    name: "Deploy to Azure Web App (Docker Container)"
+    name: "Deploy to Azure Web App (Docker)"
     runs-on: ubuntu-latest
     needs: docker
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -74,12 +73,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Azure Login (Service Principal)
+      - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy container
         uses: azure/webapps-deploy@v3
         with:
           app-name: "date-jar"

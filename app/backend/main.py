@@ -10,45 +10,44 @@ from app.backend.db import Base, engine, TESTING
 
 app = FastAPI(title="Date Jar API")
 
-
 # ------------------------------------
-# CREATE TABLES IF RUNNING THE SERVER
+# CREATE TABLES ONLY IN PRODUCTION
 # ------------------------------------
 if not TESTING:
-    print("Creating all tables...")
+    print("Creating tables in Postgres...")
     Base.metadata.create_all(bind=engine)
 else:
-    print("TESTING mode: NOT creating tables or connecting to Postgres")
+    print("TEST MODE: skipping table creation")
 
 
 # ------------------------------------
-# SERVE FRONTEND FILES
+# STATIC FRONTEND
 # ------------------------------------
 app.mount("/static", StaticFiles(directory="app/frontend"), name="static")
 
 
 @app.get("/")
-def serve_login():
+def root():
     return FileResponse("app/frontend/login.html")
 
 
 @app.get("/public")
-def serve_public():
+def public_page():
     return FileResponse("app/frontend/public.html")
 
 
 @app.get("/add")
-def serve_add():
+def add_page():
     return FileResponse("app/frontend/add.html")
 
 
 @app.get("/jar")
-def serve_jar():
+def jar_page():
     return FileResponse("app/frontend/jar.html")
 
 
 @app.get("/map")
-def serve_map():
+def map_page():
     return FileResponse("app/frontend/map.html")
 
 
@@ -57,6 +56,9 @@ def health():
     return {"status": "ok"}
 
 
+# ------------------------------------
+# OPENAPI
+# ------------------------------------
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -80,6 +82,9 @@ def custom_openapi():
 app.openapi = custom_openapi
 
 
+# ------------------------------------
+# CORS
+# ------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -89,7 +94,14 @@ app.add_middleware(
 )
 
 
+# ------------------------------------
+# ROUTERS
+# ------------------------------------
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(ideas.router, prefix="/api/ideas", tags=["ideas"])
 
+
+# ------------------------------------
+# METRICS
+# ------------------------------------
 Instrumentator().instrument(app).expose(app)
