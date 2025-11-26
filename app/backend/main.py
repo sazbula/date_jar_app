@@ -14,8 +14,14 @@ app = FastAPI(title="Date Jar API")
 # CREATE TABLES ONLY IN PRODUCTION
 # ------------------------------------
 if not TESTING:
-    print("Creating tables in Postgres...")
-    Base.metadata.create_all(bind=engine)
+    print("PRODUCTION mode: using PostgreSQL")
+    try:
+        print("Creating tables in Postgres...")
+        Base.metadata.create_all(bind=engine)
+        print("Tables created!")
+    except Exception as e:
+        print("ERROR creating tables in Postgres:")
+        print(str(e))
 else:
     print("TEST MODE: skipping table creation")
 
