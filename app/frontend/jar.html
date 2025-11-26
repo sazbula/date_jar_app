@@ -8,13 +8,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Tangerine&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/jar.css">
+  <link rel="stylesheet" href="/static/css/jar.css">
 </head>
 
 <body>
-  <body>
+
   <!-- Corner logo -->
-  <img src="./assets/jar-logo.svg" alt="Date Jar Logo" class="corner-logo" />
+  <img src="/static/assets/jar-logo.svg" alt="Date Jar Logo" class="corner-logo" />
 
   <!-- Logout button -->
   <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -23,7 +23,6 @@
   <header class="header">
     <h1 class="page-title">My Jar</h1>
   </header>
-  <body>
 
   <!-- Controls -->
   <div class="controls">
@@ -46,26 +45,19 @@
   </div>
 
   <!-- Ideas List -->
-  <main class="ideas-list" id="ideasList">
-    <!-- Ideas will load dynamically via JS -->
-  </main>
+  <main class="ideas-list" id="ideasList"></main>
 
   <!-- Floating add button -->
   <button class="add-button" id="addBtn">+</button>
 
   <!-- Navbar -->
   <nav class="navbar">
-    <a href="map.html">Map</a>
-    <a href="jar.html" class="active">My Jar</a>   
-    <a href="public.html">Public Ideas</a>
+    <a href="/map">Map</a>
+    <a href="/jar" class="active">My Jar</a>
+    <a href="/public">Public Ideas</a>
   </nav>
 
   <!-- JS -->
-  <script src="js/jar.js"></script>
+  <script src="/static/js/jar.js"></script>
 </body>
 </html>
-
-
-
-
-

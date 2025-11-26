@@ -11,29 +11,25 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
   <!-- Custom Map CSS -->
-  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="/static/css/map.css">
 </head>
 
 <body>
-  <!-- 🌍 Fullscreen Map -->
+
   <div id="map"></div>
 
-  <!-- ➕ Floating Add Button -->
   <div class="floating-buttons">
-    <button class="add-button" onclick="window.location.href='add.html'">+</button>
+    <button class="add-button" onclick="window.location.href='/add'">+</button>
   </div>
 
-  <!-- 🧭 Bottom Navbar -->
+  <!-- Navbar -->
   <nav class="navbar">
-    <a href="map.html" class="active">Map</a>
-    <a href="jar.html">My Jar</a>
-    <a href="public.html">Public Ideas</a>
+    <a href="/map" class="active">Map</a>
+    <a href="/jar">My Jar</a>
+    <a href="/public">Public Ideas</a>
   </nav>
 
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-  <!-- Your Map Logic -->
-  <script src="js/map.js"></script>
+  <script src="/static/js/map.js"></script>
 </body>
 </html>
