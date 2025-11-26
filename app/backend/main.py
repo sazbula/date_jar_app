@@ -6,19 +6,27 @@ from fastapi.responses import FileResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.backend.routers import users, ideas
+from app.backend.database import Base, engine
 import os
 
 app = FastAPI(title="Date Jar API")
 
-# -------------------------------
-# SERVE FRONTEND FILES
-# -------------------------------
 
-# Serve CSS/JS/image assets under /static
+# -------------------------------------
+# CREATE DATABASE TABLES ON STARTUP
+# -------------------------------------
+@app.on_event("startup")
+def create_tables():
+    Base.metadata.create_all(bind=engine)
+    print("Tables created (if not existing)")
+
+
+# -------------------------------------
+# SERVE FRONTEND FILES
+# -------------------------------------
 app.mount("/static", StaticFiles(directory="app/frontend"), name="static")
 
 
-# Serve actual HTML frontend pages
 @app.get("/")
 def serve_login():
     return FileResponse("app/frontend/login.html")
@@ -44,17 +52,17 @@ def serve_map():
     return FileResponse("app/frontend/map.html")
 
 
-# -------------------------------
+# -------------------------------------
 # HEALTH CHECK
-# -------------------------------
+# -------------------------------------
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
 
 
-# -------------------------------
+# -------------------------------------
 # OPENAPI CUSTOMIZATION
-# -------------------------------
+# -------------------------------------
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -77,9 +85,10 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 
-# -------------------------------
+
+# -------------------------------------
 # CORS
-# -------------------------------
+# -------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -88,13 +97,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# -------------------------------
+
+# -------------------------------------
 # API ROUTERS
-# -------------------------------
+# -------------------------------------
 app.include_router(users.router, prefix="/api/users", tags=["users"])
 app.include_router(ideas.router, prefix="/api/ideas", tags=["ideas"])
 
-# -------------------------------
+
+# -------------------------------------
 # PROMETHEUS METRICS
-# -------------------------------
+# -------------------------------------
 Instrumentator().instrument(app).expose(app)
