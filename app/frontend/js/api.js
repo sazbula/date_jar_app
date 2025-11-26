@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000/api"; // change if deployed later
+const API_BASE = "https://date-jar.azurewebsites.net/api"; // change if deployed later
 
 
 // Save token in browser

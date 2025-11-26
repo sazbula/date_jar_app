@@ -1,5 +1,5 @@
 // api base
-const API_IDEAS = "http://127.0.0.1:8000/api/ideas";
+const API_IDEAS = "https://date-jar.azurewebsites.net/api/ideas";
 
 // dom elements
 const form = document.getElementById("ideaForm");

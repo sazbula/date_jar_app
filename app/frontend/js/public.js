@@ -1,5 +1,5 @@
 // --- API base URL ---
-const API_BASE = "http://127.0.0.1:8000/api/ideas";
+const API_BASE = "https://date-jar.azurewebsites.net/api/ideas";
 
 // --- DOM elements ---
 const ideasList = document.querySelector(".ideas-list");

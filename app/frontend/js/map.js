@@ -1,5 +1,5 @@
 // --- API base URL ---
-const API_IDEAS = "http://127.0.0.1:8000/api/ideas";
+const API_IDEAS = "https://date-jar.azurewebsites.net/api/ideas";
 
 // --- Initialize Leaflet Map ---
 const map = L.map("map").setView([40.4168, -3.7038], 12); // Default Madrid center

@@ -1,4 +1,4 @@
-const API_IDEAS = "http://127.0.0.1:8000/api/ideas";
+const API_IDEAS = "https://date-jar.azurewebsites.net/api/ideas";
 
 // Load ideas from your jar
 async function loadMyJar() {
