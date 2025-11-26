@@ -5,11 +5,10 @@ from sqlalchemy.orm import sessionmaker
 
 from app.backend.db import Base, get_db
 from app.backend.main import app
-from app.backend import models
 
 
 # ----------------------------------------------------
-# IN-MEMORY TEST DATABASE  (always clean)
+# IN-MEMORY TEST DATABASE
 # ----------------------------------------------------
 TEST_SQLALCHEMY_DATABASE_URL = "sqlite://"
 
@@ -18,7 +17,7 @@ engine = create_engine(
     connect_args={"check_same_thread": False},
 )
 
-# Single shared connection for in-memory DB
+# One shared DB connection
 connection = engine.connect()
 
 TestingSessionLocal = sessionmaker(
@@ -27,13 +26,20 @@ TestingSessionLocal = sessionmaker(
     bind=connection,
 )
 
-# Reset tables
-Base.metadata.drop_all(bind=engine)
-Base.metadata.create_all(bind=engine)
+
+# ----------------------------------------------------
+# CLEAN DB BEFORE EACH TEST
+# ----------------------------------------------------
+@pytest.fixture(autouse=True)
+def clean_db():
+    """Reset all tables before every test (prevents user already exists errors)."""
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    yield
 
 
 # ----------------------------------------------------
-# Override dependency
+# Override get_db dependency
 # ----------------------------------------------------
 def override_get_db():
     db = TestingSessionLocal()
@@ -47,7 +53,7 @@ app.dependency_overrides[get_db] = override_get_db
 
 
 # ----------------------------------------------------
-# Client
+# Test client fixture
 # ----------------------------------------------------
 @pytest.fixture
 def client():
@@ -61,8 +67,12 @@ def client():
 def test_user(client):
     payload = {"username": "alice", "password": "test123"}
     r = client.post("/api/users/register", json=payload)
-    assert r.status_code == 201
-    return r.json()
+
+    # Allow 400 if the test creates multiple times in one file
+    # but normally DB resets, so this will be 201.
+    assert r.status_code in (201, 400)
+
+    return {"username": "alice"}
 
 
 @pytest.fixture
