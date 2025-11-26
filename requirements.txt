@@ -13,3 +13,4 @@ pytest-cov
 psycopg2-binary
 passlib[bcrypt]
 bcrypt==4.1.2
+httpx>=0.24.0
