@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.backend.routers import users, ideas
-from app.backend.database import Base, engine
+from app.backend.db import Base, engine
 import os
 
 app = FastAPI(title="Date Jar API")
