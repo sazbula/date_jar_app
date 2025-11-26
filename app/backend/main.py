@@ -8,6 +8,11 @@ from app.backend.routers import users, ideas
 app = FastAPI(title="Date Jar API")
 
 
+@app.get("/")
+def root():
+    return {"message": "DateJar backend is running"}
+
+
 # Custom OpenAPI
 def custom_openapi():
     if app.openapi_schema:
