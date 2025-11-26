@@ -120,7 +120,7 @@ form.addEventListener("submit", async (e) => {
 
     if (res.ok) {
       alert("idea saved successfully");
-      window.location.href = "jar.html";
+      window.location.href = "/jar";
     } else {
       alert(data.detail || "failed to save idea");
     }

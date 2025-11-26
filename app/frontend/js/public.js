@@ -113,6 +113,6 @@ fetchPublicIdeas();
 const addButton = document.querySelector(".add-button");
 if (addButton) {
   addButton.addEventListener("click", () => {
-    window.location.href = "add.html"; 
+    window.location.href = "/add"; 
   });
 }

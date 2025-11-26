@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.querySelector(".add-button");
   if (addBtn) {
     addBtn.addEventListener("click", () => {
-      window.location.href = "add.html";
+      window.location.href = "/add";
     });
   }
 
@@ -145,5 +145,5 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("logoutBtn").addEventListener("click", () => {
   localStorage.removeItem("token");
   alert("You have been logged out!");
-  window.location.href = "login.html";
+  window.location.href = "/login";
 });

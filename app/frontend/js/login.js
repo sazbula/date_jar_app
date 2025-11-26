@@ -37,7 +37,7 @@ loginForm.addEventListener("submit", async (e) => {
 
     // Redirect to public page after 1s
     setTimeout(() => {
-      window.location.href = "public.html";
+      window.location.href = "/public";
     }, 1000);
   } catch (err) {
     messageEl.textContent = "Invalid username or password.";
