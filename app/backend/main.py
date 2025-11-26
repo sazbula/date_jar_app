@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.backend.routers import users, ideas
 
@@ -50,3 +51,8 @@ app.include_router(ideas.router, prefix="/api/ideas", tags=["ideas"])
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+# Prometheus Metrics
+
+Instrumentator().instrument(app).expose(app)

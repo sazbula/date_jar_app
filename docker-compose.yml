@@ -1,20 +1,17 @@
-version: "3.9"
-
 services:
-  backend:
-    build: .
+  datejar-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: datejar-backend
     ports:
       - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/datejar
     depends_on:
-      - db
+      - datejar-db
 
-  db:
+  datejar-db:
     image: postgres:17
     container_name: datejar-db
-    restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -23,6 +20,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+    depends_on:
+      - datejar-backend
 
 volumes:
   postgres_data:
